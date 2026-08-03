@@ -6,8 +6,8 @@ type PendingAction = { label: string; run: () => void } | null;
 
 type AuthCtx = {
   user: User | null;
-  login: (email: string, _password: string) => void;
-  signup: (u: User & { password: string }) => void;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (u: User & { password: string }) => Promise<void>;
   logout: () => void;
   requireAuth: (label: string, run: () => void) => void;
   pending: PendingAction;
@@ -38,9 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {}
   };
 
-  const login = (email: string) => {
-    const name = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Guest";
-    persist({ name, email });
+  const login = async (email: string, password: string) => {
+    const res = await fetch("http://localhost:5157/api/Auth/client/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || "Invalid email or password.");
+    }
+    const data = await res.json();
+    persist(data.client);
     setAuthOpen(false);
     if (pending) {
       const run = pending.run;
@@ -48,8 +57,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTimeout(run, 200);
     }
   };
-  const signup = (u: User & { password: string }) => {
-    persist({ name: u.name, email: u.email, phone: u.phone });
+
+  const signup = async (u: User & { password: string }) => {
+    const res = await fetch("http://localhost:5157/api/Auth/client/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: u.name, email: u.email, phone: u.phone, password: u.password }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || "Failed to register.");
+    }
+    const data = await res.json();
+    persist(data.client);
     setAuthOpen(false);
     if (pending) {
       const run = pending.run;
@@ -57,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTimeout(run, 200);
     }
   };
+
   const logout = () => persist(null);
 
   const requireAuth = useCallback((label: string, run: () => void) => {

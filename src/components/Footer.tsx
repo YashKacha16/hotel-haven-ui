@@ -1,14 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Twitter, MapPin, Phone, Mail } from "lucide-react";
-import { BRAND } from "@/lib/data";
+import { useBrand } from "@/lib/settings";
 
 export function Footer() {
+  const BRAND = useBrand();
   return (
     <footer className="bg-forest text-forest-foreground mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <span className="h-9 w-9 rounded-full bg-gold text-forest grid place-items-center font-serif text-xl">A</span>
+            {BRAND.logoUrl ? (
+              <img src={BRAND.logoUrl} alt="Logo" className="h-9 w-9 object-contain rounded-full bg-gold p-1" />
+            ) : (
+              <span className="h-9 w-9 rounded-full bg-gold text-forest grid place-items-center font-serif text-xl">{BRAND.name[0]?.toUpperCase() || "A"}</span>
+            )}
             <span className="font-serif text-2xl">{BRAND.name}</span>
           </div>
           <p className="text-sm text-forest-foreground/70 leading-relaxed">{BRAND.tagline}</p>
@@ -23,7 +28,6 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-forest-foreground/80">
             <li><Link to="/rooms">Rooms & Suites</Link></li>
             <li><Link to="/dining">Dining</Link></li>
-            <li><Link to="/gallery">Gallery</Link></li>
             <li><Link to="/about">About</Link></li>
           </ul>
         </div>

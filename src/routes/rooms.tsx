@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,58 @@ import { useAuth } from "@/lib/auth";
 import { Reveal } from "@/lib/reveal";
 import { PageShell, PageHero } from "@/components/PageShell";
 import { BookRoomDialog } from "@/components/BookRoomDialog";
+
+function mapBackendRoom(backendRoom: any) {
+  const basePrice = backendRoom.basePrice || backendRoom.BasePrice || 0;
+  const categoryName = backendRoom.category?.name || backendRoom.Category?.Name || "Standard";
+  const num = backendRoom.number || backendRoom.Number || "";
+  const desc = backendRoom.description || backendRoom.Description || "";
+  const rawImages = backendRoom.images || backendRoom.Images || [];
+  const rawAmenities = backendRoom.amenities || backendRoom.Amenities || [];
+
+  const images = rawImages.map((img: string) => {
+    if (img.startsWith("/")) {
+      return `http://localhost:5157${img}`;
+    }
+    return img;
+  });
+
+  if (images.length === 0) {
+    if (categoryName.toLowerCase().includes("suite")) {
+      images.push("https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80");
+    } else if (categoryName.toLowerCase().includes("villa")) {
+      images.push("https://images.unsplash.com/photo-1587985064135-0366536eab42?auto=format&fit=crop&w=1200&q=80");
+    } else if (categoryName.toLowerCase().includes("deluxe")) {
+      images.push("https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1200&q=80");
+    } else {
+      images.push("https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80");
+    }
+  }
+
+  if (images.length < 2) {
+    images.push("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80");
+  }
+
+  const capacity = backendRoom.capacity || backendRoom.Capacity || 2;
+  const beds = capacity > 2 ? "King + Sofa" : "King bed";
+  const size = categoryName.toLowerCase().includes("suite") ? "48 m²" : categoryName.toLowerCase().includes("villa") ? "110 m²" : "32 m²";
+  const tag = categoryName.toLowerCase().includes("suite") ? "Garden View" : categoryName.toLowerCase().includes("villa") ? "Private Pool" : "Courtyard";
+
+  return {
+    id: String(backendRoom.id || backendRoom.Id),
+    name: `${categoryName} Room ${num}`.trim(),
+    category: categoryName,
+    price: basePrice,
+    tag: tag,
+    size: size,
+    beds: beds,
+    images: images,
+    amenities: rawAmenities.length > 0 ? rawAmenities : ["WiFi", "AC", "Rain shower"],
+    description: desc || `Experience premium comfort in our carefully designed ${categoryName}.`,
+    number: num,
+    floor: backendRoom.floor || backendRoom.Floor || "",
+  };
+}
 
 export const Route = createFileRoute("/rooms")({
   head: () => ({
@@ -30,10 +82,31 @@ function RoomsPage() {
   const { requireAuth } = useAuth();
   const [category, setCategory] = useState("all");
   const [price, setPrice] = useState<[number, number]>([5000, 40000]);
-  const [details, setDetails] = useState<typeof rooms[number] | null>(null);
-  const [book, setBook] = useState<typeof rooms[number] | null>(null);
+  const [details, setDetails] = useState<any | null>(null);
+  const [book, setBook] = useState<any | null>(null);
+  const [loadedRooms, setLoadedRooms] = useState<any[]>([]);
 
-  const filtered = useMemo(() => rooms.filter((r) => (category === "all" || r.category === category) && r.price >= price[0] && r.price <= price[1]), [category, price]);
+  useEffect(() => {
+    fetch("http://localhost:5157/api/Rooms")
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setLoadedRooms(data.map(mapBackendRoom));
+        } else {
+          setLoadedRooms(rooms);
+        }
+      })
+      .catch(() => {
+        setLoadedRooms(rooms);
+      });
+  }, []);
+
+  const activeRooms = loadedRooms.length > 0 ? loadedRooms : rooms;
+
+  const filtered = useMemo(() => activeRooms.filter((r) => (category === "all" || r.category === category) && r.price >= price[0] && r.price <= price[1]), [category, price, activeRooms]);
 
   return (
     <PageShell>
@@ -70,9 +143,10 @@ function RoomsPage() {
                     <div className="text-right"><div className="font-serif text-xl text-gold">₹{r.price.toLocaleString()}</div><div className="text-xs text-muted-foreground">per night</div></div>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{r.tag}</span>
-                    <span className="flex items-center gap-1"><Users className="h-3 w-3" />{r.beds}</span>
-                    <span>{r.size}</span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {r.floor ? `Floor ${r.floor}` : r.tag}
+                    </span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground flex-1">{r.description}</p>
                   <div className="mt-4 flex gap-3 text-muted-foreground">
@@ -94,18 +168,20 @@ function RoomsPage() {
         <DialogContent className="sm:max-w-3xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
           {details && (
             <>
-              <div className="grid grid-cols-2 gap-1">
-                {details.images.slice(0,2).map((s, i) => <img key={i} src={s} alt="" className="aspect-[4/3] w-full object-cover" />)}
+              <div className="w-full overflow-hidden">
+                {details.images[0] && (
+                  <img src={details.images[0]} alt={details.name} className="aspect-[16/9] w-full object-cover" />
+                )}
               </div>
               <div className="p-6">
                 <DialogHeader>
                   <DialogTitle className="font-serif text-3xl">{details.name}</DialogTitle>
                 </DialogHeader>
-                <div className="mt-1 text-xs uppercase tracking-widest text-gold">{details.tag} · {details.size} · {details.beds}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-gold">{details.floor ? `Floor ${details.floor}` : details.tag}</div>
                 <p className="mt-4 text-muted-foreground">{details.description}</p>
                 <div className="mt-6">
                   <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Amenities</div>
-                  <div className="flex flex-wrap gap-2">{details.amenities.map((a) => <Badge key={a} variant="secondary">{a}</Badge>)}</div>
+                  <div className="flex flex-wrap gap-2">{details.amenities.map((a: string) => <Badge key={a} variant="secondary">{a}</Badge>)}</div>
                 </div>
                 <div className="mt-6 border-t border-border pt-4 flex items-center justify-between">
                   <div><div className="font-serif text-2xl text-gold">₹{details.price.toLocaleString()}</div><div className="text-xs text-muted-foreground">per night, taxes extra</div></div>

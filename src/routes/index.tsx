@@ -5,8 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Star, ArrowRight, Wifi, Waves, Flower2, Car, UtensilsCrossed, Dumbbell, BellRing, Plane, ShieldCheck, BadgeCheck, Clock } from "lucide-react";
-import { BRAND, IMG, rooms, reviews, menu, amenities, gallery } from "@/lib/data";
+import { IMG, rooms, reviews, menu, amenities, gallery } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
+import { useBrand } from "@/lib/settings";
 import { Reveal } from "@/lib/reveal";
 import { BookRoomDialog } from "@/components/BookRoomDialog";
 import { toast } from "sonner";
@@ -16,10 +17,10 @@ const iconMap: Record<string, any> = { Wifi, Waves, Flower2, Car, UtensilsCrosse
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${BRAND.name} — Boutique Hotel & Coastal Restaurant` },
-      { name: "description", content: `${BRAND.tagline} Book rooms, reserve a table and order in-room dining at ${BRAND.name}.` },
-      { property: "og:title", content: `${BRAND.name} — A boutique retreat` },
-      { property: "og:description", content: BRAND.tagline },
+      { title: "Maison Auréa — Boutique Hotel & Coastal Restaurant" },
+      { name: "description", content: "A boutique retreat. Book rooms, reserve a table and order in-room dining." },
+      { property: "og:title", content: "Maison Auréa — A boutique retreat" },
+      { property: "og:description", content: "A boutique retreat." },
     ],
   }),
   component: Home,
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { requireAuth } = useAuth();
+  const BRAND = useBrand();
   const navigate = useNavigate();
   const [book, setBook] = useState<typeof rooms[number] | null>(null);
   const featured = rooms.slice(0, 4);
@@ -56,7 +58,7 @@ function Home() {
       {/* WELCOME */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
         <Reveal>
-          <img src={IMG.welcome} alt="Maison Auréa welcome" className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg" />
+          <img src={BRAND.welcomeImageUrl || IMG.welcome} alt={`${BRAND.name} welcome`} className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg" />
         </Reveal>
         <Reveal delay={120}>
           <div className="text-xs tracking-[0.3em] uppercase text-gold mb-4">Welcome</div>

@@ -6,6 +6,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider } from "../lib/theme";
 import { AuthProvider } from "../lib/auth";
+import { BrandProvider } from "../lib/settings";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { AuthModal } from "../components/AuthModal";
@@ -81,13 +82,15 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AuthProvider>
-          <Header />
-          <Outlet />
-          <Footer />
-          <AuthModal />
-          <Toaster position="top-center" />
-        </AuthProvider>
+        <BrandProvider>
+          <AuthProvider>
+            <Header />
+            <Outlet />
+            <Footer />
+            <AuthModal />
+            <Toaster position="top-center" />
+          </AuthProvider>
+        </BrandProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -43,13 +43,18 @@ export function AuthModal() {
                 <button className="text-gold hover:underline">Forgot password?</button>
               </div>
               {err && <p className="text-sm text-destructive">{err}</p>}
-              <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 gold-glow" onClick={() => {
+              <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 gold-glow" onClick={async () => {
                 if (!li.email || !li.password) return setErr("Please enter your email and password.");
-                login(li.email, li.password);
+                try {
+                  setErr(null);
+                  await login(li.email, li.password);
+                } catch (e: any) {
+                  setErr(e.message || "Failed to log in.");
+                }
               }}>Sign in</Button>
               <p className="text-xs text-muted-foreground text-center pt-1">Bookings require an account — guest browsing is always free.</p>
             </TabsContent>
-
+ 
             <TabsContent value="signup" className="pt-4 space-y-3">
               <FloatingInput id="su-name" label="Full name" value={su.name} onChange={(v) => setSu({ ...su, name: v })} />
               <FloatingInput id="su-email" label="Email" type="email" value={su.email} onChange={(v) => setSu({ ...su, email: v })} />
@@ -63,11 +68,16 @@ export function AuthModal() {
                 <span>I agree to the Terms of Service and Privacy Policy.</span>
               </label>
               {err && <p className="text-sm text-destructive">{err}</p>}
-              <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 gold-glow" onClick={() => {
+              <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 gold-glow" onClick={async () => {
                 if (!su.name || !su.email || !su.password) return setErr("Please fill in your name, email and password.");
                 if (su.password !== su.confirm) return setErr("Passwords don't match.");
                 if (!su.terms) return setErr("Please accept the terms to continue.");
-                signup(su);
+                try {
+                  setErr(null);
+                  await signup(su);
+                } catch (e: any) {
+                  setErr(e.message || "Failed to create account.");
+                }
               }}>Create account</Button>
             </TabsContent>
           </Tabs>

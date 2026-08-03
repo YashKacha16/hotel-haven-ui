@@ -7,13 +7,12 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
-import { BRAND } from "@/lib/data";
+import { useBrand } from "@/lib/settings";
 
 const nav = [
   { to: "/", label: "Home" },
   { to: "/rooms", label: "Rooms" },
   { to: "/dining", label: "Dining" },
-  { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -23,6 +22,7 @@ export function Header() {
   const { theme, toggle } = useTheme();
   const { user, logout, requireAuth } = useAuth();
   const navigate = useNavigate();
+  const BRAND = useBrand();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +37,11 @@ export function Header() {
     <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${scrolled ? "bg-background/85 backdrop-blur-md border-b border-border shadow-sm py-2" : "bg-transparent py-4"}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <span className="h-9 w-9 rounded-full bg-forest text-gold grid place-items-center font-serif text-xl">A</span>
+          {BRAND.logoUrl ? (
+            <img src={BRAND.logoUrl} alt="Logo" className="h-9 w-9 object-contain rounded-full bg-forest p-1" />
+          ) : (
+            <span className="h-9 w-9 rounded-full bg-forest text-gold grid place-items-center font-serif text-xl">{BRAND.name[0]?.toUpperCase() || "A"}</span>
+          )}
           <span className="font-serif text-xl sm:text-2xl leading-none">{BRAND.name}</span>
         </Link>
 

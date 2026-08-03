@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -41,6 +41,45 @@ function DiningPage() {
   const [notes, setNotes] = useState("");
   const [done, setDone] = useState(false);
   const [rid] = useState(() => "RSV-" + Math.floor(10000 + Math.random() * 90000));
+  const [loadedMenu, setLoadedMenu] = useState<Record<string, any[]>>({});
+
+  useEffect(() => {
+    fetch("http://localhost:5157/api/Menu/grouped")
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const grouped: Record<string, any[]> = {};
+          data.forEach((group: any) => {
+            const catName = group.categoryName || group.CategoryName || "Starters";
+            const items = group.items || group.Items || [];
+            grouped[catName] = items.map((item: any) => {
+              const imgUrl = item.image || item.Image || "";
+              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
+              return {
+                name: item.name || item.Name,
+                price: item.price || item.Price,
+                veg: isVeg,
+                tags: isVeg ? ["Vegetarian"] : ["Non-Vegetarian"],
+                desc: item.description || item.Description || "",
+                img: finalImg || null,
+              };
+            });
+          });
+          setLoadedMenu(grouped);
+        } else {
+          setLoadedMenu(menu);
+        }
+      })
+      .catch(() => {
+        setLoadedMenu(menu);
+      });
+  }, []);
+
+  const activeMenu = Object.keys(loadedMenu).length > 0 ? loadedMenu : menu;
 
   const submit = () => requireAuth("Reserve a table", () => setDone(true));
 
@@ -54,17 +93,17 @@ function DiningPage() {
           <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">The menu</div>
           <h2 className="font-serif text-4xl sm:text-5xl">Read the whole thing</h2>
         </Reveal>
-        <Tabs defaultValue="Starters">
+        <Tabs key={Object.keys(activeMenu).join("-")} defaultValue={Object.keys(activeMenu)[0] || "Starters"}>
           <TabsList className="mx-auto flex w-fit flex-wrap h-auto bg-cream">
-            {Object.keys(menu).map((c) => <TabsTrigger key={c} value={c}>{c}</TabsTrigger>)}
+            {Object.keys(activeMenu).map((c) => <TabsTrigger key={c} value={c}>{c}</TabsTrigger>)}
           </TabsList>
-          {Object.entries(menu).map(([cat, items]) => (
+          {Object.entries(activeMenu).map(([cat, items]) => (
             <TabsContent key={cat} value={cat} className="mt-10">
               <div className="grid md:grid-cols-2 gap-6">
                 {items.map((d, i) => (
                   <Reveal key={d.name} delay={i * 60}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition py-0 gap-0 flex flex-row">
-                      <img src={d.img} alt={d.name} className="w-40 h-40 object-cover shrink-0" />
+                      {d.img && <img src={d.img} alt={d.name} className="w-40 h-40 object-cover shrink-0" />}
                       <div className="p-5 flex-1">
                         <div className="flex items-start justify-between gap-3">
                           <div>
@@ -73,7 +112,7 @@ function DiningPage() {
                               <h3 className="font-serif text-lg">{d.name}</h3>
                             </div>
                             <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">{d.desc}</p>
-                            <div className="mt-2 flex gap-1.5 flex-wrap">{d.tags.map((t) => <Badge key={t} variant="secondary" className="text-[10px] tracking-widest uppercase">{t}</Badge>)}</div>
+                            <div className="mt-2 flex gap-1.5 flex-wrap">{d.tags.map((t: string) => <Badge key={t} variant="secondary" className="text-[10px] tracking-widest uppercase">{t}</Badge>)}</div>
                           </div>
                           <span className="font-serif text-lg text-gold whitespace-nowrap">₹{d.price}</span>
                         </div>

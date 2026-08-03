@@ -89,7 +89,53 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
                 ))}
               </RadioGroup>
             </div>
-            <NextButtons onBack={() => setStep(2)} onNext={() => { setStep(4); toast.success("Reservation confirmed!", { description: `Booking ${bookingId}` }); }} nextLabel="Confirm booking" />
+            <NextButtons onBack={() => setStep(2)} onNext={async () => {
+              try {
+                // Fetch rooms from backend to map to a real room Id
+                const roomsRes = await fetch("http://localhost:5157/api/Rooms");
+                let matchedRoomId = 1;
+                if (roomsRes.ok) {
+                  const roomsList = await roomsRes.json();
+                  const matched = roomsList.find((r: any) => r.category?.name?.toLowerCase() === room.category.toLowerCase())
+                                  || roomsList.find((r: any) => r.category?.name)
+                                  || roomsList[0];
+                  if (matched) {
+                    matchedRoomId = matched.id;
+                  }
+                }
+
+                const fd = new FormData();
+                fd.append("GuestName", name);
+                fd.append("Phone", phone);
+                fd.append("Email", email);
+                fd.append("IdNumber", "ID-" + Math.floor(100000 + Math.random() * 900000));
+                fd.append("RoomId", matchedRoomId.toString());
+                fd.append("CheckInDate", checkIn);
+                fd.append("CheckInTime", "14:00");
+                fd.append("CheckOutDate", checkOut);
+                fd.append("Source", "Online");
+                fd.append("Guests", guests.toString());
+                fd.append("AdvanceAmount", "0");
+                fd.append("PaymentMethod", pay);
+                fd.append("Status", "Confirmed");
+
+                const res = await fetch("http://localhost:5157/api/Bookings", {
+                  method: "POST",
+                  body: fd
+                });
+
+                if (!res.ok) {
+                  const errData = await res.json().catch(() => ({}));
+                  throw new Error(errData.message || "Failed to confirm booking.");
+                }
+
+                const resData = await res.json();
+                toast.success("Reservation confirmed!", { description: `Booking Code: ${resData.bookingCode}` });
+                setStep(4);
+              } catch (e: any) {
+                toast.error(e.message || "Something went wrong.");
+              }
+            }} nextLabel="Confirm booking" />
           </div>
         )}
         {step === 4 && (
