@@ -119,7 +119,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
                 fd.append("PaymentMethod", pay);
                 fd.append("Status", "Confirmed");
 
-                const res = await fetch("https://hotel-backend.runasp.net//api/Bookings", {
+                const res = await fetch("https://hotel-backend.runasp.net/api/Bookings", {
                   method: "POST",
                   body: fd
                 });

@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("https://hotel-backend.runasp.net//api/Auth/client/login", {
+    const res = await fetch("https://hotel-backend.runasp.net/api/Auth/client/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (u: User & { password: string }) => {
-    const res = await fetch("https://hotel-backend.runasp.net//api/Auth/client/register", {
+    const res = await fetch("https://hotel-backend.runasp.net/api/Auth/client/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: u.name, email: u.email, phone: u.phone, password: u.password }),

@@ -24,7 +24,7 @@ function mapBackendRoom(backendRoom: any) {
 
   const images = rawImages.map((img: string) => {
     if (img.startsWith("/")) {
-      return `https://hotel-backend.runasp.net/${img}`;
+      return `https://hotel-backend.runasp.net${img}`;
     }
     return img;
   });
@@ -87,7 +87,7 @@ function RoomsPage() {
   const [loadedRooms, setLoadedRooms] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("https://hotel-backend.runasp.net//api/Rooms")
+    fetch("https://hotel-backend.runasp.net/api/Rooms")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
