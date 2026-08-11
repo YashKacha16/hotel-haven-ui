@@ -92,7 +92,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
             <NextButtons onBack={() => setStep(2)} onNext={async () => {
               try {
                 // Fetch rooms from backend to map to a real room Id
-                const roomsRes = await fetch("https://hotel-backend.runasp.net//api/Rooms");
+                const roomsRes = await fetch("https://hotel-backend.runasp.net/api/Rooms");
                 let matchedRoomId = 1;
                 if (roomsRes.ok) {
                   const roomsList = await roomsRes.json();
