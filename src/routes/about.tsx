@@ -39,7 +39,7 @@ function About() {
   const [chefs, setChefs] = useState<Chef[]>([]);
 
   useEffect(() => {
-    fetch("https://hotel-backend.runasp.net/api/Chefs")
+    fetch("https://hotel-backend.runasp.net//api/Chefs")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -84,7 +84,7 @@ function About() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-10 items-center">
             <Reveal>
               <img
-                src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)}
+                src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net/${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)}
                 className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg"
                 alt={chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
               />
@@ -116,7 +116,7 @@ function About() {
                     <div className="aspect-[4/5] overflow-hidden relative bg-muted">
                       {c.imageUrl ? (
                         <img
-                          src={`https://hotel-backend.runasp.net${c.imageUrl}`}
+                          src={`https://hotel-backend.runasp.net/${c.imageUrl}`}
                           alt={c.name}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         />
