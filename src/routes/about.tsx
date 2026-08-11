@@ -32,14 +32,14 @@ const values = [
   { i: HandHeart, t: "Hands on", d: "Eighteen rooms and a family-sized team who remember your name." },
   { i: Sparkles, t: "Quiet craft", d: "Every fixture, glaze and print made by artisans we know." },
 ];
-const awards = ["Condé Nast Traveller · 2024","Travel + Leisure · Best New Retreats","EazyDiner Best Coastal Kitchen 2025","World Luxury Hotel Awards"];
+const awards = ["Condé Nast Traveller · 2024", "Travel + Leisure · Best New Retreats", "EazyDiner Best Coastal Kitchen 2025", "World Luxury Hotel Awards"];
 
 function About() {
   const BRAND = useBrand();
   const [chefs, setChefs] = useState<Chef[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Chefs")
+    fetch("https://hotel-backend.runasp.net/api/Chefs")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -49,7 +49,7 @@ function About() {
           setChefs(data);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const defaultAbout = `In 2018 my grandmother left me a house she had loved for forty years and a letter that said: keep it kind. ${BRAND.name} is what that letter became — eighteen rooms, a small restaurant, and a promise to move gently through the days.\n\nWe opened in 2021 with six rooms and a wood-fired grill. Today the villa stretches to a garden pavilion, a wellness room and a bar that closes when the last conversation ends. Nothing here is at scale — it never will be.`;
@@ -83,9 +83,9 @@ function About() {
         <section className="bg-cream/60 py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-10 items-center">
             <Reveal>
-              <img 
-                src={chefs.length === 1 && chefs[0].imageUrl ? `http://localhost:5157${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)} 
-                className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg" 
+              <img
+                src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)}
+                className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg"
                 alt={chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
               />
             </Reveal>
@@ -115,10 +115,10 @@ function About() {
                   <Card className="overflow-hidden border-0 shadow-sm bg-background h-full rounded-2xl flex flex-col">
                     <div className="aspect-[4/5] overflow-hidden relative bg-muted">
                       {c.imageUrl ? (
-                        <img 
-                          src={`http://localhost:5157${c.imageUrl}`} 
-                          alt={c.name} 
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                        <img
+                          src={`https://hotel-backend.runasp.net${c.imageUrl}`}
+                          alt={c.name}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No Photo</div>

@@ -34,7 +34,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
   const [brand, setBrand] = useState<BrandSettings>(defaultBrand);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Settings/general")
+    fetch("https://hotel-backend.runasp.net/api/Settings/general")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -43,16 +43,16 @@ export function BrandProvider({ children }: { children: ReactNode }) {
         if (data && (data.name || data.Name)) {
           setBrand({
             name: data.name || data.Name || defaultBrand.name,
-            tagline: defaultBrand.tagline, 
+            tagline: defaultBrand.tagline,
             address: data.address || data.Address || defaultBrand.address,
             phone: data.phone || data.Phone || defaultBrand.phone,
             email: data.email || data.Email || defaultBrand.email,
-            logoUrl: (data.logoUrl || data.LogoUrl) ? `http://localhost:5157${data.logoUrl || data.LogoUrl}` : undefined,
-            welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `http://localhost:5157${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
+            logoUrl: (data.logoUrl || data.LogoUrl) ? `https://hotel-backend.runasp.net${data.logoUrl || data.LogoUrl}` : undefined,
+            welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `https://hotel-backend.runasp.net${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
             aboutText: data.aboutText || data.AboutText || undefined,
             chefName: data.chefName || data.ChefName || undefined,
             chefDescription: data.chefDescription || data.ChefDescription || undefined,
-            chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `http://localhost:5157${data.chefImageUrl || data.ChefImageUrl}` : undefined,
+            chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `https://hotel-backend.runasp.net${data.chefImageUrl || data.ChefImageUrl}` : undefined,
             hours: defaultBrand.hours,
           });
         }

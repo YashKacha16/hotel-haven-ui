@@ -24,7 +24,7 @@ function mapBackendRoom(backendRoom: any) {
 
   const images = rawImages.map((img: string) => {
     if (img.startsWith("/")) {
-      return `http://localhost:5157${img}`;
+      return `https://hotel-backend.runasp.net${img}`;
     }
     return img;
   });
@@ -87,7 +87,7 @@ function RoomsPage() {
   const [loadedRooms, setLoadedRooms] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Rooms")
+    fetch("https://hotel-backend.runasp.net/api/Rooms")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -117,7 +117,7 @@ function RoomsPage() {
         <Card className="p-4 sm:p-5 shadow-xl grid gap-4 md:grid-cols-[1fr_1fr_1fr_1fr_auto] items-end">
           <Field label="Check-in"><Input type="date" /></Field>
           <Field label="Check-out"><Input type="date" /></Field>
-          <Field label="Guests"><Select defaultValue="2"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[1,2,3,4,5,6].map((n) => <SelectItem key={n} value={String(n)}>{n} guest{n>1?"s":""}</SelectItem>)}</SelectContent></Select></Field>
+          <Field label="Guests"><Select defaultValue="2"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[1, 2, 3, 4, 5, 6].map((n) => <SelectItem key={n} value={String(n)}>{n} guest{n > 1 ? "s" : ""}</SelectItem>)}</SelectContent></Select></Field>
           <Field label="Category"><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All</SelectItem><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Deluxe">Deluxe</SelectItem><SelectItem value="Suite">Suite</SelectItem><SelectItem value="Villa">Villa</SelectItem><SelectItem value="Cottage">Cottage</SelectItem></SelectContent></Select></Field>
           <Button className="bg-gold text-gold-foreground hover:bg-gold/90 h-10"><Search className="h-4 w-4 mr-2" />Search</Button>
           <div className="md:col-span-5">

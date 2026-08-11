@@ -28,8 +28,8 @@ export const Route = createFileRoute("/dining")({
   component: DiningPage,
 });
 
-const times = ["12:00","12:30","13:00","13:30","19:00","19:30","20:00","20:30","21:00","21:30"];
-const availability: Record<string,"green"|"amber"|"red"> = { "12:00":"green","12:30":"green","13:00":"amber","13:30":"green","19:00":"amber","19:30":"red","20:00":"amber","20:30":"green","21:00":"green","21:30":"green" };
+const times = ["12:00", "12:30", "13:00", "13:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
+const availability: Record<string, "green" | "amber" | "red"> = { "12:00": "green", "12:30": "green", "13:00": "amber", "13:30": "green", "19:00": "amber", "19:30": "red", "20:00": "amber", "20:30": "green", "21:00": "green", "21:30": "green" };
 
 function DiningPage() {
   const { requireAuth } = useAuth();
@@ -44,7 +44,7 @@ function DiningPage() {
   const [loadedMenu, setLoadedMenu] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Menu/grouped")
+    fetch("https://hotel-backend.runasp.net/api/Menu/grouped")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -57,7 +57,7 @@ function DiningPage() {
             const items = group.items || group.Items || [];
             grouped[catName] = items.map((item: any) => {
               const imgUrl = item.image || item.Image || "";
-              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const finalImg = imgUrl.startsWith("/") ? `https://hotel-backend.runasp.net${imgUrl}` : imgUrl;
               const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
               return {
                 name: item.name || item.Name,
@@ -139,13 +139,13 @@ function DiningPage() {
               <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Date</Label><Input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-1" /></div>
               <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Guests</Label>
                 <div className="mt-1 flex items-center border border-input rounded-md h-10">
-                  <button onClick={() => setGuests(Math.max(1, guests-1))} className="px-3 h-full hover:bg-accent"><Minus className="h-3 w-3" /></button>
+                  <button onClick={() => setGuests(Math.max(1, guests - 1))} className="px-3 h-full hover:bg-accent"><Minus className="h-3 w-3" /></button>
                   <span className="flex-1 text-center">{guests}</span>
-                  <button onClick={() => setGuests(guests+1)} className="px-3 h-full hover:bg-accent"><Plus className="h-3 w-3" /></button>
+                  <button onClick={() => setGuests(guests + 1)} className="px-3 h-full hover:bg-accent"><Plus className="h-3 w-3" /></button>
                 </div>
               </div>
-              <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Seating</Label><Select value={seat} onValueChange={setSeat}><SelectTrigger className="mt-1"><SelectValue /></SelectTrigger><SelectContent>{["Indoor","Outdoor","AC","Private","Window"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></div>
-              <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Occasion</Label><Select value={occ} onValueChange={setOcc}><SelectTrigger className="mt-1"><SelectValue /></SelectTrigger><SelectContent>{["Casual","Birthday","Anniversary","Business"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></div>
+              <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Seating</Label><Select value={seat} onValueChange={setSeat}><SelectTrigger className="mt-1"><SelectValue /></SelectTrigger><SelectContent>{["Indoor", "Outdoor", "AC", "Private", "Window"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></div>
+              <div><Label className="text-xs uppercase tracking-widest text-muted-foreground">Occasion</Label><Select value={occ} onValueChange={setOcc}><SelectTrigger className="mt-1"><SelectValue /></SelectTrigger><SelectContent>{["Casual", "Birthday", "Anniversary", "Business"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></div>
             </div>
             <div className="mt-6">
               <Label className="text-xs uppercase tracking-widest text-muted-foreground">Time</Label>
@@ -154,8 +154,8 @@ function DiningPage() {
                   const a = availability[t];
                   const disabled = a === "red";
                   return (
-                    <button key={t} disabled={disabled} onClick={() => setTime(t)} className={`px-4 h-10 rounded-md border text-sm flex items-center gap-2 transition ${time===t ? "border-gold bg-gold text-gold-foreground" : "border-border hover:border-gold"} ${disabled ? "opacity-40 cursor-not-allowed line-through" : ""}`}>
-                      <span className={`h-2 w-2 rounded-full ${a==="green"?"bg-green-500":a==="amber"?"bg-amber-500":"bg-red-500"}`} />{t}
+                    <button key={t} disabled={disabled} onClick={() => setTime(t)} className={`px-4 h-10 rounded-md border text-sm flex items-center gap-2 transition ${time === t ? "border-gold bg-gold text-gold-foreground" : "border-border hover:border-gold"} ${disabled ? "opacity-40 cursor-not-allowed line-through" : ""}`}>
+                      <span className={`h-2 w-2 rounded-full ${a === "green" ? "bg-green-500" : a === "amber" ? "bg-amber-500" : "bg-red-500"}`} />{t}
                     </button>
                   );
                 })}

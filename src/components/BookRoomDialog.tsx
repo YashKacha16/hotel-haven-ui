@@ -46,7 +46,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
           </DialogTitle>
           {step < 4 && (
             <div className="flex items-center gap-2 mt-2">
-              {[1,2,3].map((n) => (
+              {[1, 2, 3].map((n) => (
                 <div key={n} className={`h-1.5 flex-1 rounded-full ${n <= step ? "bg-gold" : "bg-muted"}`} />
               ))}
             </div>
@@ -82,8 +82,8 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
             <div>
               <Label className="text-xs uppercase tracking-widest text-muted-foreground">Payment method</Label>
               <RadioGroup value={pay} onValueChange={setPay} className="grid grid-cols-3 gap-2 mt-2">
-                {[["card","Card"],["upi","UPI"],["hotel","Pay at Hotel"]].map(([v,l]) => (
-                  <label key={v} className={`border rounded-lg px-3 py-3 cursor-pointer text-sm flex items-center gap-2 ${pay===v ? "border-gold bg-accent" : "border-border"}`}>
+                {[["card", "Card"], ["upi", "UPI"], ["hotel", "Pay at Hotel"]].map(([v, l]) => (
+                  <label key={v} className={`border rounded-lg px-3 py-3 cursor-pointer text-sm flex items-center gap-2 ${pay === v ? "border-gold bg-accent" : "border-border"}`}>
                     <RadioGroupItem value={v} />{l}
                   </label>
                 ))}
@@ -92,13 +92,13 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
             <NextButtons onBack={() => setStep(2)} onNext={async () => {
               try {
                 // Fetch rooms from backend to map to a real room Id
-                const roomsRes = await fetch("http://localhost:5157/api/Rooms");
+                const roomsRes = await fetch("https://hotel-backend.runasp.net/api/Rooms");
                 let matchedRoomId = 1;
                 if (roomsRes.ok) {
                   const roomsList = await roomsRes.json();
                   const matched = roomsList.find((r: any) => r.category?.name?.toLowerCase() === room.category.toLowerCase())
-                                  || roomsList.find((r: any) => r.category?.name)
-                                  || roomsList[0];
+                    || roomsList.find((r: any) => r.category?.name)
+                    || roomsList[0];
                   if (matched) {
                     matchedRoomId = matched.id;
                   }
@@ -119,7 +119,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
                 fd.append("PaymentMethod", pay);
                 fd.append("Status", "Confirmed");
 
-                const res = await fetch("http://localhost:5157/api/Bookings", {
+                const res = await fetch("https://hotel-backend.runasp.net/api/Bookings", {
                   method: "POST",
                   body: fd
                 });
