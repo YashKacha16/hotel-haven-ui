@@ -174,7 +174,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
             <NextButtons onBack={() => setStep(2)} onNext={async () => {
               try {
                 // Fetch rooms from backend to map to a real room Id
-                const roomsRes = await fetch("http://localhost:5157/api/Rooms");
+                const roomsRes = await fetch("https://hotel-backend.runasp.net/api/Rooms");
                 let matchedRoomId = 1;
                 if (roomsRes.ok) {
                   const roomsList = await roomsRes.json();
@@ -202,7 +202,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
                 fd.append("PaymentMethod", pay);
                 fd.append("Status", "Confirmed");
 
-                const res = await fetch("http://localhost:5157/api/Bookings", {
+                const res = await fetch("https://hotel-backend.runasp.net/api/Bookings", {
                   method: "POST",
                   body: fd
                 });

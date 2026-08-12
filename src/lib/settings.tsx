@@ -34,7 +34,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
   const [brand, setBrand] = useState<BrandSettings>(defaultBrand);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Settings/general")
+    fetch("https://hotel-backend.runasp.net/api/Settings/general")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();

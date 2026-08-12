@@ -24,12 +24,19 @@ export const Route = createFileRoute("/about")({
   component: About,
 });
 
+const values = [
+  { i: Leaf, t: "Grown near", d: "Ninety percent of what we cook comes from within 40 km." },
+  { i: HandHeart, t: "Hands on", d: "Eighteen rooms and a family-sized team who remember your name." },
+  { i: Sparkles, t: "Quiet craft", d: "Every fixture, glaze and print made by artisans we know." },
+];
+const awards = ["Condé Nast Traveller · 2024", "Travel + Leisure · Best New Retreats", "EazyDiner Best Coastal Kitchen 2025", "World Luxury Hotel Awards"];
+
 function About() {
   const BRAND = useBrand();
   const [chefs, setChefs] = useState<Chef[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Chefs")
+    fetch("https://hotel-backend.runasp.net/api/Chefs")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -39,7 +46,7 @@ function About() {
           setChefs(data);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const aboutText = BRAND.aboutText;
@@ -49,10 +56,10 @@ function About() {
 
   return (
     <PageShell>
-      <PageHero 
-        eyebrow="Our story" 
-        title={BRAND.name ? `About ${BRAND.name}` : "About Us"} 
-        image="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1920&q=80" 
+      <PageHero
+        eyebrow="Our story"
+        title={BRAND.name ? `About ${BRAND.name}` : "About Us"}
+        image="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1920&q=80"
       />
 
       {paragraphs.length > 0 ? (
@@ -65,8 +72,33 @@ function About() {
               >
                 {p}
               </p>
-            ))}
+            );
+          })}
           </Reveal>
+        </section>
+
+      {chefs.length <= 1 ? (
+        <section className="bg-cream/60 py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-10 items-center">
+            <Reveal>
+              <img
+                src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)}
+                className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg"
+                alt={chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
+              />
+            </Reveal>
+            <Reveal delay={120}>
+              <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">
+                {chefs.length === 1 && chefs[0].role ? chefs[0].role : "Meet the Chef"}
+              </div>
+              <h2 className="font-serif text-4xl">
+                {chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
+              </h2>
+              <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line">
+                {chefs.length === 1 ? chefs[0].description : (BRAND.chefDescription || "Trained in Copenhagen and Bengaluru, Chef Aditi builds her menus around the sea and the season. Expect line-caught fish, heritage rice, and a fierce loyalty to the growers she has cooked with for a decade.")}
+              </p>
+            </Reveal>
+          </div>
         </section>
       ) : null}
 

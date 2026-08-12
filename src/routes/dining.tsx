@@ -22,7 +22,7 @@ function DiningPage() {
   const [loadedMenu, setLoadedMenu] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Menu/grouped")
+    fetch("https://hotel-backend.runasp.net/api/Menu/grouped")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -35,7 +35,7 @@ function DiningPage() {
             const items = group.items || group.Items || [];
             grouped[catName] = items.map((item: any) => {
               const imgUrl = item.image || item.Image || "";
-              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const finalImg = imgUrl.startsWith("/") ? `https://hotel-backend.runasp.net${imgUrl}` : imgUrl;
               const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
               return {
                 name: item.name || item.Name,
@@ -50,7 +50,7 @@ function DiningPage() {
           setLoadedMenu(grouped);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const activeMenu = loadedMenu;

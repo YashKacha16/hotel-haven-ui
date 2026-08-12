@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem("hotel_user");
       if (raw) setUser(JSON.parse(raw));
-    } catch {}
+    } catch { }
   }, []);
 
   const persist = (u: User | null) => {
@@ -35,11 +35,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       if (u) localStorage.setItem("hotel_user", JSON.stringify(u));
       else localStorage.removeItem("hotel_user");
-    } catch {}
+    } catch { }
   };
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("http://localhost:5157/api/Auth/client/login", {
+    const res = await fetch("https://hotel-backend.runasp.net/api/Auth/client/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (u: User & { password: string }) => {
-    const res = await fetch("http://localhost:5157/api/Auth/client/register", {
+    const res = await fetch("https://hotel-backend.runasp.net/api/Auth/client/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: u.name, email: u.email, phone: u.phone, password: u.password }),
