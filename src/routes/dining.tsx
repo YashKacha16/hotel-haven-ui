@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/lib/reveal";
 import { PageShell, PageHero } from "@/components/PageShell";
+import { UtensilsCrossed } from "lucide-react";
 
 export const Route = createFileRoute("/dining")({
   head: () => ({
@@ -57,7 +58,7 @@ function DiningPage() {
 
   return (
     <PageShell>
-      <PageHero eyebrow="Dining" title="Chef Aditi's coastal menu" subtitle="Line-caught seafood, heritage grain and the vegetables our neighbours grow." image="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" />
+      <PageHero eyebrow="Dining" title="coastal menu" subtitle="Line-caught seafood, heritage grain and the vegetables our neighbours grow." image="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" />
 
       {/* MENU */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-20">
@@ -75,7 +76,7 @@ function DiningPage() {
                 {items.map((d, i) => (
                   <Reveal key={d.name} delay={i * 60}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition py-0 gap-0 flex flex-row">
-                      {d.img && <img src={d.img} alt={d.name} className="w-40 h-40 object-cover shrink-0" />}
+                      <MenuImage src={d.img} alt={d.name} className="w-40 h-40 object-cover shrink-0" />
                       <div className="p-5 flex-1">
                         <div className="flex items-start justify-between gap-3">
                           <div>
@@ -98,5 +99,21 @@ function DiningPage() {
         </Tabs>
       </section>
     </PageShell>
+  );
+}
+
+function MenuImage({ src, alt, className }: { src?: string | null; alt?: string; className?: string }) {
+  const [error, setError] = useState(false);
+  
+  if (!src || error) {
+    return (
+      <div className={`flex items-center justify-center bg-muted/30 text-muted-foreground/30 ${className}`}>
+        <UtensilsCrossed className="w-1/3 h-1/3 min-w-8 min-h-8" />
+      </div>
+    );
+  }
+  
+  return (
+    <img src={src} alt={alt} className={className} onError={() => setError(true)} />
   );
 }

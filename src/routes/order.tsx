@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Plus, Minus, ShoppingBag, Clock, Check, BedDouble } from "lucide-react";
+import { Plus, Minus, ShoppingBag, Clock, Check, BedDouble, UtensilsCrossed } from "lucide-react";
 import { toast } from "sonner";
 import { menu, type MenuItem } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
@@ -231,7 +231,7 @@ function OrderPage() {
                 {count === 0 && <p className="text-sm text-muted-foreground">Your cart is empty. Browse the menu to add dishes.</p>}
                 {items.filter((i) => cart[i.name]).map((i) => (
                   <div key={i.name} className="flex gap-3">
-                    {i.img && <img src={i.img} className="h-16 w-16 rounded-md object-cover" />}
+                    <MenuImage src={i.img} alt={i.name} className="h-16 w-16 rounded-md object-cover" />
                     <div className="flex-1">
                       <div className="text-sm font-medium">{i.name}</div>
                       <div className="text-xs text-muted-foreground">{currencySymbol}{i.price}</div>
@@ -275,7 +275,9 @@ function OrderPage() {
                 {arr.map((d: any, i) => (
                   <Reveal key={d.name} delay={i * 50}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition py-0 gap-0">
-                      <div className="aspect-[5/3] overflow-hidden"><img src={d.img} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" /></div>
+                      <div className="aspect-[5/3] overflow-hidden">
+                        <MenuImage src={d.img} alt={d.name} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
+                      </div>
                       <div className="p-5">
                         <div className="flex items-start justify-between gap-3"><h3 className="font-serif text-lg">{d.name}</h3><span className="font-serif text-lg text-gold">{currencySymbol}{d.price}</span></div>
                         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{d.desc}</p>
@@ -319,5 +321,21 @@ function OrderPage() {
         </div>
       )}
     </PageShell>
+  );
+}
+
+function MenuImage({ src, alt, className }: { src?: string | null; alt?: string; className?: string }) {
+  const [error, setError] = useState(false);
+  
+  if (!src || error) {
+    return (
+      <div className={`flex items-center justify-center bg-muted/30 text-muted-foreground/30 ${className}`}>
+        <UtensilsCrossed className="w-1/3 h-1/3 min-w-8 min-h-8" />
+      </div>
+    );
+  }
+  
+  return (
+    <img src={src} alt={alt} className={className} onError={() => setError(true)} />
   );
 }

@@ -236,7 +236,7 @@ function Home() {
                 {items?.slice(0, 3).map((d: any, i) => (
                   <Reveal key={d.name} delay={i * 80}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-shadow group py-0 pb-4 gap-0">
-                      <div className="aspect-[5/4] overflow-hidden"><img src={d.img} alt={d.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" /></div>
+                      <div className="aspect-[5/4] overflow-hidden"><MenuImage src={d.img} alt={d.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" /></div>
                       <div className="p-5">
                         <div className="flex items-start justify-between gap-3">
                           <h3 className="font-serif text-xl">{d.name}</h3>
@@ -318,5 +318,21 @@ function Home() {
 
       <BookRoomDialog room={book} open={!!book} onOpenChange={(v) => !v && setBook(null)} />
     </main>
+  );
+}
+
+function MenuImage({ src, alt, className }: { src?: string | null; alt?: string; className?: string }) {
+  const [error, setError] = useState(false);
+  
+  if (!src || error) {
+    return (
+      <div className={`flex items-center justify-center bg-muted/30 text-muted-foreground/30 ${className}`}>
+        <UtensilsCrossed className="w-1/3 h-1/3 min-w-8 min-h-8" />
+      </div>
+    );
+  }
+  
+  return (
+    <img src={src} alt={alt} className={className} onError={() => setError(true)} />
   );
 }
