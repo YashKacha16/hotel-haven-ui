@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Reveal } from "@/lib/reveal";
 import { PageShell, PageHero } from "@/components/PageShell";
 import { useBrand } from "@/lib/settings";
+import { Leaf, HandHeart, Sparkles } from "lucide-react";
+import { IMG } from "@/lib/data";
 
 interface Chef {
   id: number;
@@ -72,10 +74,10 @@ function About() {
               >
                 {p}
               </p>
-            );
-          })}
+            ))}
           </Reveal>
         </section>
+      ) : null}
 
       {chefs.length <= 1 ? (
         <section className="bg-cream/60 py-20">
