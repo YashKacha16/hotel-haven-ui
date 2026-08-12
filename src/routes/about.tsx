@@ -79,31 +79,6 @@ function About() {
         </section>
       ) : null}
 
-      {chefs.length <= 1 ? (
-        <section className="bg-cream/60 py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-10 items-center">
-            <Reveal>
-              <img
-                src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net${chefs[0].imageUrl}` : (BRAND.chefImageUrl || IMG.chef)}
-                className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg"
-                alt={chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
-              />
-            </Reveal>
-            <Reveal delay={120}>
-              <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">
-                {chefs.length === 1 && chefs[0].role ? chefs[0].role : "Meet the Chef"}
-              </div>
-              <h2 className="font-serif text-4xl">
-                {chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Aditi Rao")}
-              </h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line">
-                {chefs.length === 1 ? chefs[0].description : (BRAND.chefDescription || "Trained in Copenhagen and Bengaluru, Chef Aditi builds her menus around the sea and the season. Expect line-caught fish, heritage rice, and a fierce loyalty to the growers she has cooked with for a decade.")}
-              </p>
-            </Reveal>
-          </div>
-        </section>
-      ) : null}
-
       {hasChefData ? (
         chefs.length > 1 ? (
           <section className="bg-cream/60 py-20">
