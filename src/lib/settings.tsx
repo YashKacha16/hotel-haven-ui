@@ -47,12 +47,12 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             address: data.address || data.Address || "",
             phone: data.phone || data.Phone || "",
             email: data.email || data.Email || "",
-            logoUrl: (data.logoUrl || data.LogoUrl) ? `http://localhost:5157${data.logoUrl || data.LogoUrl}` : undefined,
-            welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `http://localhost:5157${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
+            logoUrl: (data.logoUrl || data.LogoUrl) ? `https://hotel-backend.runasp.net${data.logoUrl || data.LogoUrl}` : undefined,
+            welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `https://hotel-backend.runasp.net${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
             aboutText: data.aboutText || data.AboutText || "",
             chefName: data.chefName || data.ChefName || "",
             chefDescription: data.chefDescription || data.ChefDescription || "",
-            chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `http://localhost:5157${data.chefImageUrl || data.ChefImageUrl}` : undefined,
+            chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `https://hotel-backend.runasp.net${data.chefImageUrl || data.ChefImageUrl}` : undefined,
             hours: defaultBrand.hours,
           });
         }

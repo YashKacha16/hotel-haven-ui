@@ -34,13 +34,13 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
 
   useEffect(() => {
     if (open) {
-      fetch("http://localhost:5157/api/Settings/general")
+      fetch("https://hotel-backend.runasp.net/api/Settings/general")
         .then((res) => res.json())
         .then((data) => setSettings(data))
         .catch(() => { });
 
       if (room) {
-        fetch("http://localhost:5157/api/Rooms")
+        fetch("https://hotel-backend.runasp.net/api/Rooms")
           .then((res) => res.json())
           .then((roomsList) => {
             const matched = roomsList.find((r: any) => r.category?.name?.toLowerCase() === room.category.toLowerCase());
@@ -48,7 +48,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
               if (matched.capacity) setMaxCapacity(matched.capacity);
               setMatchedRoomId(matched.id);
 
-              fetch(`http://localhost:5157/api/Bookings`)
+              fetch(`https://hotel-backend.runasp.net/api/Bookings`)
                 .then((res) => res.json())
                 .then((data) => setBookings(data))
                 .catch(() => { });

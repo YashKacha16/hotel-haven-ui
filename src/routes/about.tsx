@@ -119,7 +119,7 @@ function About() {
                       <div className="aspect-[4/5] overflow-hidden relative bg-muted">
                         {c.imageUrl ? (
                           <img
-                            src={`http://localhost:5157${c.imageUrl}`}
+                            src={`https://hotel-backend.runasp.net${c.imageUrl}`}
                             alt={c.name}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                           />
@@ -143,7 +143,7 @@ function About() {
             <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-10 items-center">
               <Reveal>
                 <img
-                  src={chefs.length === 1 && chefs[0].imageUrl ? `http://localhost:5157${chefs[0].imageUrl}` : (BRAND.chefImageUrl || "")}
+                  src={chefs.length === 1 && chefs[0].imageUrl ? `https://hotel-backend.runasp.net${chefs[0].imageUrl}` : (BRAND.chefImageUrl || "")}
                   className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg"
                   alt={chefs.length === 1 ? chefs[0].name : (BRAND.chefName || "Chef")}
                 />

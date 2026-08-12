@@ -24,7 +24,7 @@ function mapBackendRoom(backendRoom: any) {
 
   const images = rawImages.map((img: string) => {
     if (img.startsWith("/")) {
-      return `http://localhost:5157${img}`;
+      return `https://hotel-backend.runasp.net${img}`;
     }
     return img;
   });
@@ -88,16 +88,16 @@ function Home() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Feedbacks")
+    fetch("https://hotel-backend.runasp.net/api/Feedbacks")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
           setFeedbacks(data);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
 
-    fetch("http://localhost:5157/api/Rooms")
+    fetch("https://hotel-backend.runasp.net/api/Rooms")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -113,7 +113,7 @@ function Home() {
         setLoadedRooms(rooms);
       });
 
-    fetch("http://localhost:5157/api/Menu/grouped")
+    fetch("https://hotel-backend.runasp.net/api/Menu/grouped")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -126,7 +126,7 @@ function Home() {
             const items = group.items || group.Items || [];
             grouped[catName] = items.map((item: any) => {
               const imgUrl = item.image || item.Image || "";
-              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const finalImg = imgUrl.startsWith("/") ? `https://hotel-backend.runasp.net${imgUrl}` : imgUrl;
               const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
               return {
                 name: item.name || item.Name,
@@ -233,7 +233,7 @@ function Home() {
           {Object.entries(activeMenu).map(([c, items]) => (
             <TabsContent key={c} value={c} className="mt-10">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items?.slice(0,3).map((d: any, i) => (
+                {items?.slice(0, 3).map((d: any, i) => (
                   <Reveal key={d.name} delay={i * 80}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-shadow group py-0 pb-4 gap-0">
                       <div className="aspect-[5/4] overflow-hidden"><img src={d.img} alt={d.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" /></div>

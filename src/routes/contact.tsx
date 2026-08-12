@@ -32,7 +32,7 @@ function Contact() {
   const [reviewsList, setReviewsList] = useState<any[]>([]);
 
   const fetchFeedbacks = () => {
-    fetch("http://localhost:5157/api/Feedbacks")
+    fetch("https://hotel-backend.runasp.net/api/Feedbacks")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -50,7 +50,7 @@ function Contact() {
           setReviewsList(mapped);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function Contact() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("http://localhost:5157/api/Feedbacks", {
+      const res = await fetch("https://hotel-backend.runasp.net/api/Feedbacks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -96,11 +96,11 @@ function Contact() {
 
   return (
     <PageShell>
-      <PageHero 
-        eyebrow="Feedback & Contact" 
-        title="Share your experience" 
-        subtitle="We value your feedback and answer every note personally." 
-        image="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1920&q=80" 
+      <PageHero
+        eyebrow="Feedback & Contact"
+        title="Share your experience"
+        subtitle="We value your feedback and answer every note personally."
+        image="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1920&q=80"
       />
 
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16 grid md:grid-cols-2 gap-8">
@@ -109,26 +109,26 @@ function Contact() {
           <Card className="p-8 border-0 shadow-sm bg-cream/40">
             <h2 className="font-serif text-3xl">Feedback Form</h2>
             <p className="text-xs text-muted-foreground mt-1 mb-6">Tell us about your stay or dining experience.</p>
-            
+
             <form className="space-y-4" onSubmit={handleSubmitFeedback}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground">Your Name</Label>
-                  <Input 
-                    required 
-                    value={name} 
-                    onChange={(e) => setName(e.target.value)} 
-                    placeholder="e.g. Ananya R." 
-                    className="mt-1" 
+                  <Input
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Ananya R."
+                    className="mt-1"
                   />
                 </div>
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground">City / Location</Label>
-                  <Input 
-                    value={city} 
-                    onChange={(e) => setCity(e.target.value)} 
-                    placeholder="e.g. Mumbai" 
-                    className="mt-1" 
+                  <Input
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="e.g. Mumbai"
+                    className="mt-1"
                   />
                 </div>
               </div>
@@ -153,13 +153,13 @@ function Contact() {
 
               <div>
                 <Label className="text-xs uppercase tracking-widest text-muted-foreground">Your Feedback</Label>
-                <Textarea 
-                  required 
-                  rows={4} 
-                  value={text} 
-                  onChange={(e) => setText(e.target.value)} 
-                  placeholder="Share your thoughts about your experience with us..." 
-                  className="mt-1" 
+                <Textarea
+                  required
+                  rows={4}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Share your thoughts about your experience with us..."
+                  className="mt-1"
                 />
               </div>
 

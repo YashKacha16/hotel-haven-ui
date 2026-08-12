@@ -36,7 +36,7 @@ function OrderPage() {
       return;
     }
     setLoadingBooking(true);
-    fetch(`http://localhost:5157/api/Bookings/active-checkin?email=${encodeURIComponent(user.email)}`)
+    fetch(`https://hotel-backend.runasp.net/api/Bookings/active-checkin?email=${encodeURIComponent(user.email)}`)
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -63,10 +63,10 @@ function OrderPage() {
   const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Settings/general")
+    fetch("https://hotel-backend.runasp.net/api/Settings/general")
       .then((res) => res.json())
       .then((data) => setSettings(data))
-      .catch(() => {});
+      .catch(() => { });
 
     const saved = localStorage.getItem("reorder_cart");
     if (saved) {
@@ -76,7 +76,7 @@ function OrderPage() {
           setCart(parsed);
           toast.success("Re-order items loaded into your cart!");
         }
-      } catch {}
+      } catch { }
       localStorage.removeItem("reorder_cart");
     }
   }, []);
@@ -88,7 +88,7 @@ function OrderPage() {
   const serviceChargePercent = settings?.serviceChargePercent ?? 10;
 
   useEffect(() => {
-    fetch("http://localhost:5157/api/Menu/grouped")
+    fetch("https://hotel-backend.runasp.net/api/Menu/grouped")
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -101,7 +101,7 @@ function OrderPage() {
             const items = group.items || group.Items || [];
             grouped[catName] = items.map((item: any) => {
               const imgUrl = item.image || item.Image || "";
-              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const finalImg = imgUrl.startsWith("/") ? `https://hotel-backend.runasp.net${imgUrl}` : imgUrl;
               const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
               return {
                 id: item.id || item.Id,
@@ -117,7 +117,7 @@ function OrderPage() {
           setLoadedMenu(grouped);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const activeMenu = loadedMenu;
@@ -150,7 +150,7 @@ function OrderPage() {
         items: selectedItems
       };
 
-      const res = await fetch("http://localhost:5157/api/Orders", {
+      const res = await fetch("https://hotel-backend.runasp.net/api/Orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -183,7 +183,7 @@ function OrderPage() {
           <BedDouble className="h-10 w-10 mx-auto text-gold" />
           <h1 className="font-serif text-3xl mt-4">Sign in to order</h1>
           <p className="text-muted-foreground mt-2">In-room dining is available for our house guests.</p>
-          <Button className="mt-6 bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => requireAuth("Order food", () => {})}>Sign in</Button>
+          <Button className="mt-6 bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => requireAuth("Order food", () => { })}>Sign in</Button>
         </div>
       </PageShell>
     );
@@ -247,7 +247,7 @@ function OrderPage() {
               </div>
               <div className="border-t border-border pt-4 space-y-3">
                 <Textarea placeholder="Special instructions…" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />
-                
+
                 <div className="space-y-1.5 text-xs bg-cream/50 p-3 rounded-xl border border-border/60">
                   <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>{currencySymbol}{subtotal.toLocaleString()}</span></div>
                   <div className="flex justify-between text-muted-foreground"><span>Taxes ({taxPercent}%)</span><span>{currencySymbol}{taxes.toLocaleString()}</span></div>
@@ -311,7 +311,7 @@ function OrderPage() {
             </div>
             <Progress value={(status + 1) * 25} className="mt-3" />
             <div className="mt-3 flex justify-between text-[11px] text-muted-foreground">
-              {["Placed","Preparing","On the way","Delivered"].map((s, i) => (
+              {["Placed", "Preparing", "On the way", "Delivered"].map((s, i) => (
                 <span key={s} className={i <= status ? "text-gold font-medium" : ""}>{s}</span>
               ))}
             </div>

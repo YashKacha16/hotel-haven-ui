@@ -35,7 +35,7 @@ function Account() {
     if (!user) return;
     setLoading(true);
 
-    const fetchBookings = fetch(`http://localhost:5157/api/Bookings?email=${encodeURIComponent(user.email)}`)
+    const fetchBookings = fetch(`https://hotel-backend.runasp.net/api/Bookings?email=${encodeURIComponent(user.email)}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -76,7 +76,7 @@ function Account() {
         }
       });
 
-    const fetchOrders = fetch(`http://localhost:5157/api/Orders/client-orders?email=${encodeURIComponent(user.email)}`)
+    const fetchOrders = fetch(`https://hotel-backend.runasp.net/api/Orders/client-orders?email=${encodeURIComponent(user.email)}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -102,7 +102,7 @@ function Account() {
 
   const cancelBooking = async (dbId: number) => {
     try {
-      const res = await fetch(`http://localhost:5157/api/Bookings/${dbId}`, {
+      const res = await fetch(`https://hotel-backend.runasp.net/api/Bookings/${dbId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Cancelled" })
