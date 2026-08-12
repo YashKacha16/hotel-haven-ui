@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -14,12 +14,64 @@ import { toast } from "sonner";
 
 const iconMap: Record<string, any> = { Wifi, Waves, Flower2, Car, UtensilsCrossed, Dumbbell, BellRing, Plane };
 
+function mapBackendRoom(backendRoom: any) {
+  const basePrice = backendRoom.basePrice || backendRoom.BasePrice || 0;
+  const categoryName = backendRoom.category?.name || backendRoom.Category?.Name || "Standard";
+  const num = backendRoom.number || backendRoom.Number || "";
+  const desc = backendRoom.description || backendRoom.Description || "";
+  const rawImages = backendRoom.images || backendRoom.Images || [];
+  const rawAmenities = backendRoom.amenities || backendRoom.Amenities || [];
+
+  const images = rawImages.map((img: string) => {
+    if (img.startsWith("/")) {
+      return `http://localhost:5157${img}`;
+    }
+    return img;
+  });
+
+  if (images.length === 0) {
+    if (categoryName.toLowerCase().includes("suite")) {
+      images.push("https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80");
+    } else if (categoryName.toLowerCase().includes("villa")) {
+      images.push("https://images.unsplash.com/photo-1587985064135-0366536eab42?auto=format&fit=crop&w=1200&q=80");
+    } else if (categoryName.toLowerCase().includes("deluxe")) {
+      images.push("https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1200&q=80");
+    } else {
+      images.push("https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80");
+    }
+  }
+
+  if (images.length < 2) {
+    images.push("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80");
+  }
+
+  const capacity = backendRoom.capacity || backendRoom.Capacity || 2;
+  const beds = capacity > 2 ? "King + Sofa" : "King bed";
+  const size = categoryName.toLowerCase().includes("suite") ? "48 m²" : categoryName.toLowerCase().includes("villa") ? "110 m²" : "32 m²";
+  const tag = categoryName.toLowerCase().includes("suite") ? "Garden View" : categoryName.toLowerCase().includes("villa") ? "Private Pool" : "Courtyard";
+
+  return {
+    id: String(backendRoom.id || backendRoom.Id),
+    name: `${categoryName} Room ${num}`.trim(),
+    category: categoryName,
+    price: basePrice,
+    tag: tag,
+    size: size,
+    beds: beds,
+    images: images,
+    amenities: rawAmenities.length > 0 ? rawAmenities : ["WiFi", "AC", "Rain shower"],
+    description: desc || `Experience premium comfort in our carefully designed ${categoryName}.`,
+    number: num,
+    floor: backendRoom.floor || backendRoom.Floor || "",
+  };
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Maison Auréa — Boutique Hotel & Coastal Restaurant" },
+      { title: "Hotel — Boutique Hotel & Coastal Restaurant" },
       { name: "description", content: "A boutique retreat. Book rooms, reserve a table and order in-room dining." },
-      { property: "og:title", content: "Maison Auréa — A boutique retreat" },
+      { property: "og:title", content: "Hotel — A boutique retreat" },
       { property: "og:description", content: "A boutique retreat." },
     ],
   }),
@@ -30,11 +82,76 @@ function Home() {
   const { requireAuth } = useAuth();
   const BRAND = useBrand();
   const navigate = useNavigate();
-  const [book, setBook] = useState<typeof rooms[number] | null>(null);
-  const featured = rooms.slice(0, 4);
+  const [book, setBook] = useState<any | null>(null);
+  const [loadedRooms, setLoadedRooms] = useState<any[]>([]);
+  const [loadedMenu, setLoadedMenu] = useState<Record<string, any[]>>({});
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5157/api/Feedbacks")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setFeedbacks(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch("http://localhost:5157/api/Rooms")
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setLoadedRooms(data.map(mapBackendRoom));
+        } else {
+          setLoadedRooms(rooms);
+        }
+      })
+      .catch(() => {
+        setLoadedRooms(rooms);
+      });
+
+    fetch("http://localhost:5157/api/Menu/grouped")
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const grouped: Record<string, any[]> = {};
+          data.forEach((group: any) => {
+            const catName = group.categoryName || group.CategoryName || "Starters";
+            const items = group.items || group.Items || [];
+            grouped[catName] = items.map((item: any) => {
+              const imgUrl = item.image || item.Image || "";
+              const finalImg = imgUrl.startsWith("/") ? `http://localhost:5157${imgUrl}` : imgUrl;
+              const isVeg = item.veg !== undefined ? item.veg : (item.Veg !== undefined ? item.Veg : true);
+              return {
+                name: item.name || item.Name,
+                price: item.price || item.Price,
+                veg: isVeg,
+                tags: isVeg ? ["Vegetarian"] : ["Non-Vegetarian"],
+                desc: item.description || item.Description || "",
+                img: finalImg || null,
+              };
+            });
+          });
+          setLoadedMenu(grouped);
+        } else {
+          setLoadedMenu(menu);
+        }
+      })
+      .catch(() => {
+        setLoadedMenu(menu);
+      });
+  }, []);
+
+  const featured = loadedRooms.slice(0, 4);
+  const activeMenu = loadedMenu;
 
   const bookRoom = () => requireAuth("Book a room", () => navigate({ to: "/rooms" }));
-  const reserveTable = () => requireAuth("Reserve a table", () => navigate({ to: "/dining", hash: "reserve" }));
   const orderFood = () => requireAuth("Order to room", () => navigate({ to: "/order" }));
 
   return (
@@ -49,24 +166,25 @@ function Home() {
           <p className="mt-6 max-w-xl text-white/85 text-lg">{BRAND.tagline}</p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Button onClick={bookRoom} size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 gold-glow h-12 px-8">Book a Room</Button>
-            <Button onClick={reserveTable} size="lg" variant="outline" className="border-white/70 text-white hover:bg-white hover:text-forest h-12 px-8 bg-transparent">Reserve a Table</Button>
           </div>
           <button onClick={orderFood} className="mt-6 text-sm text-white/80 hover:text-gold underline underline-offset-4">Order food to your room →</button>
         </div>
       </section>
 
       {/* WELCOME */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
-        <Reveal>
-          <img src={BRAND.welcomeImageUrl || IMG.welcome} alt={`${BRAND.name} welcome`} className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg" />
-        </Reveal>
-        <Reveal delay={120}>
-          <div className="text-xs tracking-[0.3em] uppercase text-gold mb-4">Welcome</div>
-          <h2 className="font-serif text-4xl sm:text-5xl leading-tight">A century-old villa, reimagined as a home for slow travellers.</h2>
-          <p className="mt-6 text-muted-foreground leading-relaxed">Set among frangipani and mango groves a short walk from the sea, {BRAND.name} has just eighteen rooms and a fiercely loved restaurant. Everything here — the linen, the cutlery, the fish on the grill — is chosen by people who care what you'll remember tomorrow.</p>
-          <Link to="/about" className="inline-flex items-center gap-2 mt-8 text-gold hover:gap-3 transition-all">Our story <ArrowRight className="h-4 w-4" /></Link>
-        </Reveal>
-      </section>
+      {BRAND.aboutText ? (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
+          <Reveal>
+            <img src={BRAND.welcomeImageUrl || IMG.welcome} alt={`${BRAND.name} welcome`} className="rounded-2xl aspect-[4/5] object-cover w-full shadow-lg" />
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="text-xs tracking-[0.3em] uppercase text-gold mb-4">Welcome</div>
+            <h2 className="font-serif text-4xl sm:text-5xl leading-tight">{BRAND.name ? `Welcome to ${BRAND.name}` : "Welcome"}</h2>
+            <p className="mt-6 text-muted-foreground leading-relaxed">{BRAND.aboutText}</p>
+            <Link to="/about" className="inline-flex items-center gap-2 mt-8 text-gold hover:gap-3 transition-all">Our story <ArrowRight className="h-4 w-4" /></Link>
+          </Reveal>
+        </section>
+      ) : null}
 
       {/* FEATURED ROOMS */}
       <section className="bg-cream/60 py-24">
@@ -105,17 +223,17 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24">
         <Reveal className="text-center max-w-2xl mx-auto mb-10">
           <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">A Taste of Our Kitchen</div>
-          <h2 className="font-serif text-4xl sm:text-5xl">Chef Aditi's coastal menu</h2>
+          <h2 className="font-serif text-4xl sm:text-5xl">Our coastal menu</h2>
           <p className="mt-4 text-muted-foreground">Line-caught seafood, heritage rice and the vegetables our neighbours grow.</p>
         </Reveal>
-        <Tabs defaultValue="Main Course">
+        <Tabs defaultValue={Object.keys(activeMenu)[0] || "Starters"}>
           <TabsList className="mx-auto flex w-fit bg-cream">
-            {["Starters","Main Course","Desserts"].map((c) => <TabsTrigger key={c} value={c}>{c}</TabsTrigger>)}
+            {Object.keys(activeMenu).map((c) => <TabsTrigger key={c} value={c}>{c}</TabsTrigger>)}
           </TabsList>
-          {(["Starters","Main Course","Desserts"] as const).map((c) => (
+          {Object.entries(activeMenu).map(([c, items]) => (
             <TabsContent key={c} value={c} className="mt-10">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {menu[c].slice(0,3).map((d, i) => (
+                {items?.slice(0,3).map((d: any, i) => (
                   <Reveal key={d.name} delay={i * 80}>
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-shadow group py-0 pb-4 gap-0">
                       <div className="aspect-[5/4] overflow-hidden"><img src={d.img} alt={d.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" /></div>
@@ -154,63 +272,33 @@ function Home() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24">
-        <Reveal className="text-center max-w-2xl mx-auto mb-12">
-          <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">Loved by guests</div>
-          <h2 className="font-serif text-4xl sm:text-5xl">Stories from our stay</h2>
-        </Reveal>
-        <div className="grid md:grid-cols-3 gap-6">
-          {reviews.map((r, i) => (
-            <Reveal key={r.name} delay={i * 100}>
-              <Card className="p-8 h-full border-0 shadow-sm bg-cream/60">
-                <div className="flex gap-1 mb-3">{Array.from({length: r.rating}).map((_,i) => <Star key={i} className="h-4 w-4 fill-gold text-gold" />)}</div>
-                <p className="font-serif text-lg leading-relaxed">"{r.text}"</p>
-                <div className="mt-6 flex items-center gap-3">
-                  <img src={r.avatar} alt={r.name} className="h-10 w-10 rounded-full object-cover" />
-                  <div><div className="text-sm font-medium">{r.name}</div><div className="text-xs text-muted-foreground">{r.city}</div></div>
-                </div>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* GALLERY GRID */}
-      <section className="bg-cream/60 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal className="flex items-end justify-between mb-10 flex-wrap gap-4">
-            <div>
-              <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">In the moment</div>
-              <h2 className="font-serif text-4xl sm:text-5xl">A glimpse</h2>
-            </div>
-            <Link to="/gallery" className="text-gold flex items-center gap-2 hover:gap-3 transition-all">Open gallery <ArrowRight className="h-4 w-4" /></Link>
+      {feedbacks.length > 0 ? (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 py-24">
+          <Reveal className="text-center max-w-2xl mx-auto mb-12">
+            <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">Loved by guests</div>
+            <h2 className="font-serif text-4xl sm:text-5xl">Stories from our stay</h2>
           </Reveal>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {gallery.slice(0, 8).map((g, i) => (
-              <Reveal key={i} delay={i * 40}>
-                <div className={`overflow-hidden rounded-xl ${i % 5 === 0 ? "aspect-[3/4]" : "aspect-square"}`}>
-                  <img src={g.src} alt="" className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
-                </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {feedbacks.map((r, i) => (
+              <Reveal key={r.id || i} delay={i * 100}>
+                <Card className="p-8 h-full border-0 shadow-sm bg-cream/60 flex flex-col justify-between">
+                  <div>
+                    <div className="flex gap-1 mb-3">{Array.from({ length: r.rating || 5 }).map((_, idx) => <Star key={idx} className="h-4 w-4 fill-gold text-gold" />)}</div>
+                    <p className="font-serif text-lg leading-relaxed">"{r.comment}"</p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-border/50">
+                    <div className="text-sm font-medium">{r.name}</div>
+                    <div className="text-xs text-muted-foreground">{r.city || "Guest"}</div>
+                  </div>
+                </Card>
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
-      {/* NEWSLETTER */}
-      <section className="relative py-24 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80" alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-forest/80" />
-        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 text-center text-forest-foreground">
-          <div className="text-xs tracking-[0.3em] uppercase text-gold mb-3">Stay in touch</div>
-          <h2 className="font-serif text-4xl sm:text-5xl">Letters from the coast</h2>
-          <p className="mt-4 text-forest-foreground/80">Seasonal menus, quiet weeks and member-only rates — once a month, never more.</p>
-          <form className="mt-8 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" onSubmit={(e) => { e.preventDefault(); toast.success("Welcome to the letters."); }}>
-            <Input placeholder="you@example.com" className="bg-white/10 border-white/20 text-white placeholder:text-white/60 h-12" />
-            <Button type="submit" className="bg-gold text-gold-foreground hover:bg-gold/90 h-12 px-8">Subscribe</Button>
-          </form>
-        </div>
-      </section>
+
+
 
       {/* TRUST STRIP */}
       <section className="border-y border-border bg-cream/40">

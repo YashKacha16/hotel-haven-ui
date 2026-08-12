@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Users, MapPin, Wifi, Wind } from "lucide-react";
-import { BRAND, rooms } from "@/lib/data";
+import { rooms } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { Reveal } from "@/lib/reveal";
 import { PageShell, PageHero } from "@/components/PageShell";
@@ -69,9 +69,9 @@ function mapBackendRoom(backendRoom: any) {
 export const Route = createFileRoute("/rooms")({
   head: () => ({
     meta: [
-      { title: `Rooms & Suites — ${BRAND.name}` },
+      { title: "Rooms & Suites" },
       { name: "description", content: "Eighteen individually designed rooms, suites and villas overlooking the Konkan coast." },
-      { property: "og:title", content: `Rooms & Suites — ${BRAND.name}` },
+      { property: "og:title", content: "Rooms & Suites" },
       { property: "og:description", content: "Boutique rooms, suites and private villas." },
     ],
   }),
@@ -93,18 +93,19 @@ function RoomsPage() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setLoadedRooms(data.map(mapBackendRoom));
-        } else {
-          setLoadedRooms(rooms);
         }
       })
-      .catch(() => {
-        setLoadedRooms(rooms);
-      });
+      .catch(() => {});
   }, []);
 
-  const activeRooms = loadedRooms.length > 0 ? loadedRooms : rooms;
+  const activeRooms = loadedRooms;
+
+  const categoriesList = useMemo(() => {
+    const list = new Set(activeRooms.map((r) => r.category));
+    return Array.from(list).filter(Boolean);
+  }, [activeRooms]);
 
   const filtered = useMemo(() => activeRooms.filter((r) => (category === "all" || r.category === category) && r.price >= price[0] && r.price <= price[1]), [category, price, activeRooms]);
 
@@ -118,7 +119,17 @@ function RoomsPage() {
           <Field label="Check-in"><Input type="date" /></Field>
           <Field label="Check-out"><Input type="date" /></Field>
           <Field label="Guests"><Select defaultValue="2"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[1,2,3,4,5,6].map((n) => <SelectItem key={n} value={String(n)}>{n} guest{n>1?"s":""}</SelectItem>)}</SelectContent></Select></Field>
-          <Field label="Category"><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All</SelectItem><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Deluxe">Deluxe</SelectItem><SelectItem value="Suite">Suite</SelectItem><SelectItem value="Villa">Villa</SelectItem><SelectItem value="Cottage">Cottage</SelectItem></SelectContent></Select></Field>
+          <Field label="Category">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {categoriesList.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
           <Button className="bg-gold text-gold-foreground hover:bg-gold/90 h-10"><Search className="h-4 w-4 mr-2" />Search</Button>
           <div className="md:col-span-5">
             <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground"><span>Price / night</span><span className="text-foreground">₹{price[0].toLocaleString()} – ₹{price[1].toLocaleString()}</span></div>

@@ -1,9 +1,9 @@
 // Realistic dummy data for the hotel + restaurant brand.
 export const BRAND = {
-  name: "Maison Auréa",
-  address: "12 Coral Cove, Alibaug, Maharashtra 402201",
-  phone: "+91 98200 12345",
-  email: "reservations@maisonaurea.com",
+  name: "",
+  address: "",
+  phone: "",
+  email: "",
   hours: [
     { day: "Reception", time: "24 hours" },
     { day: "Restaurant — Breakfast", time: "7:00 – 11:00" },

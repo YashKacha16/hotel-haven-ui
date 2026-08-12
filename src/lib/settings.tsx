@@ -16,10 +16,10 @@ export type BrandSettings = {
 };
 
 const defaultBrand: BrandSettings = {
-  name: "Maison Auréa",
-  address: "12 Coral Cove, Alibaug, Maharashtra 402201",
-  phone: "+91 98200 12345",
-  email: "reservations@maisonaurea.com",
+  name: "",
+  address: "",
+  phone: "",
+  email: "",
   hours: [
     { day: "Reception", time: "24 hours" },
     { day: "Restaurant — Breakfast", time: "7:00 – 11:00" },
@@ -40,18 +40,18 @@ export function BrandProvider({ children }: { children: ReactNode }) {
         return res.json();
       })
       .then((data) => {
-        if (data && (data.name || data.Name)) {
+        if (data) {
           setBrand({
-            name: data.name || data.Name || defaultBrand.name,
-            tagline: defaultBrand.tagline, 
-            address: data.address || data.Address || defaultBrand.address,
-            phone: data.phone || data.Phone || defaultBrand.phone,
-            email: data.email || data.Email || defaultBrand.email,
+            name: data.name || data.Name || "",
+            tagline: data.tagline || data.Tagline || "",
+            address: data.address || data.Address || "",
+            phone: data.phone || data.Phone || "",
+            email: data.email || data.Email || "",
             logoUrl: (data.logoUrl || data.LogoUrl) ? `http://localhost:5157${data.logoUrl || data.LogoUrl}` : undefined,
             welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `http://localhost:5157${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
-            aboutText: data.aboutText || data.AboutText || undefined,
-            chefName: data.chefName || data.ChefName || undefined,
-            chefDescription: data.chefDescription || data.ChefDescription || undefined,
+            aboutText: data.aboutText || data.AboutText || "",
+            chefName: data.chefName || data.ChefName || "",
+            chefDescription: data.chefDescription || data.ChefDescription || "",
             chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `http://localhost:5157${data.chefImageUrl || data.ChefImageUrl}` : undefined,
             hours: defaultBrand.hours,
           });
@@ -59,6 +59,39 @@ export function BrandProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => { });
   }, []);
+
+  useEffect(() => {
+    if (!brand.name) return;
+
+    const realName = brand.name;
+
+    const updateTitle = () => {
+      if (/Maison Aur[eé]a/gi.test(document.title)) {
+        document.title = document.title.replace(/Maison Aur[eé]a/gi, realName);
+      } else if (/Maison/gi.test(document.title)) {
+        document.title = document.title.replace(/Maison/gi, realName);
+      } else if (document.title.includes("Hotel —")) {
+        document.title = document.title.replace("Hotel —", `${realName} —`);
+      } else if (document.title.endsWith("— Hotel")) {
+        document.title = document.title.replace("— Hotel", `— ${realName}`);
+      } else if (!document.title.toLowerCase().includes(realName.toLowerCase())) {
+        document.title = `${realName} — Boutique Hotel & Restaurant`;
+      }
+    };
+
+    updateTitle();
+
+    const titleEl = document.querySelector("title");
+    if (!titleEl) return;
+
+    const observer = new MutationObserver(() => {
+      updateTitle();
+    });
+
+    observer.observe(titleEl, { childList: true, characterData: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [brand.name]);
 
   return <SettingsContext.Provider value={brand}>{children}</SettingsContext.Provider>;
 }
