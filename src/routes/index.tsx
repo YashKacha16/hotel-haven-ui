@@ -183,7 +183,7 @@ function Home() {
     <main>
       {/* HERO */}
       <section className="relative min-h-screen w-full overflow-hidden">
-        <img src={IMG.hero} alt="" className="absolute inset-0 h-full w-full object-cover scale-105" />
+        <img src={BRAND.welcomeImageUrl || IMG.hero} alt="" className="absolute inset-0 h-full w-full object-cover scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
         <div className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 text-white pt-24 pb-16">
           <div className="text-xs tracking-[0.4em] uppercase text-gold mb-6 animate-in fade-in duration-700">A boutique retreat</div>
