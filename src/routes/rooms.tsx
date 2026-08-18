@@ -8,7 +8,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Users, MapPin, Wifi, Wind } from "lucide-react";
+import { Search, Users, MapPin, Wifi, Wind, Waves, Flower2, Car, UtensilsCrossed, Dumbbell, BellRing, Plane, Tv, Compass, GlassWater, Bath, Sparkles } from "lucide-react";
 import { rooms } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { Reveal } from "@/lib/reveal";
@@ -80,6 +80,25 @@ export const Route = createFileRoute("/rooms")({
 });
 
 
+
+
+const getAmenityIcon = (name: string) => {
+  const lower = name.toLowerCase();
+  if (lower.includes("wifi") || lower.includes("internet")) return Wifi;
+  if (lower.includes("pool") || lower.includes("wave") || lower.includes("swim")) return Waves;
+  if (lower.includes("spa") || lower.includes("wellness")) return Flower2;
+  if (lower.includes("park") || lower.includes("car")) return Car;
+  if (lower.includes("dine") || lower.includes("dining") || lower.includes("food") || lower.includes("restaurant")) return UtensilsCrossed;
+  if (lower.includes("gym") || lower.includes("fit") || lower.includes("workout")) return Dumbbell;
+  if (lower.includes("service") || lower.includes("bell")) return BellRing;
+  if (lower.includes("pick") || lower.includes("plane") || lower.includes("transfer") || lower.includes("airport")) return Plane;
+  if (lower.includes("tv")) return Tv;
+  if (lower.includes("ac") || lower.includes("air")) return Wind;
+  if (lower.includes("balcony") || lower.includes("view")) return Compass;
+  if (lower.includes("bar") || lower.includes("drink")) return GlassWater;
+  if (lower.includes("bath") || lower.includes("tub")) return Bath;
+  return Sparkles;
+};
 
 function RoomsPage() {
   const { requireAuth } = useAuth();
@@ -163,8 +182,11 @@ function RoomsPage() {
                     </span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground flex-1">{r.description}</p>
-                  <div className="mt-4 flex gap-3 text-muted-foreground">
-                    <Wifi className="h-4 w-4" /><Wind className="h-4 w-4" />
+                  <div className="mt-4 flex flex-wrap gap-2 text-muted-foreground">
+                    {(r.amenities || []).map((a: string) => {
+                      const I = getAmenityIcon(a);
+                      return <I key={a} className="h-4 w-4" title={a} />;
+                    })}
                   </div>
                   <div className="mt-5 flex gap-2">
                     <Button variant="outline" className="flex-1" onClick={() => setDetails(r)}>View Details</Button>
