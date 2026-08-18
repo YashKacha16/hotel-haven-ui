@@ -78,6 +78,48 @@ export const Route = createFileRoute("/rooms")({
   component: RoomsPage,
 });
 
+
+function RoomImageSlider({ images, alt }: { images: string[]; alt: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [images]);
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {images.map((img, index) => (
+        <img
+          key={index}
+          src={img}
+          alt={`${alt} - ${index}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            index === currentIndex ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        />
+      ))}
+      {images.length > 1 && (
+        <div className="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
+          {images.map((_, index) => (
+            <span
+              key={index}
+              className={`size-1.5 rounded-full transition-all ${
+                index === currentIndex ? "bg-white w-3" : "bg-white/50"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function RoomsPage() {
   const { requireAuth } = useAuth();
   const [category, setCategory] = useState("all");
@@ -145,7 +187,7 @@ function RoomsPage() {
             <Reveal key={r.id} delay={i * 60}>
               <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition group py-0 pb-6 gap-0 h-full">
                 <div className="aspect-[4/3] overflow-hidden relative">
-                  <img src={r.images[0]} alt={r.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <RoomImageSlider images={r.images} alt={r.name} />
                   <Badge className="absolute top-3 left-3 bg-background/85 text-foreground border-0">{r.category}</Badge>
                 </div>
                 <div className="p-6 flex flex-col flex-1">
@@ -181,7 +223,7 @@ function RoomsPage() {
             <>
               <div className="w-full overflow-hidden">
                 {details.images[0] && (
-                  <img src={details.images[0]} alt={details.name} className="aspect-[16/9] w-full object-cover" />
+                  <div className="aspect-[16/9] w-full relative"><RoomImageSlider images={details.images} alt={details.name} /></div>
                 )}
               </div>
               <div className="p-6">

@@ -7,6 +7,7 @@ export type BrandSettings = {
   phone: string;
   email: string;
   logoUrl?: string;
+  logoBackgroundColor?: string;
   welcomeImageUrl?: string;
   aboutText?: string;
   chefName?: string;
@@ -48,6 +49,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             phone: data.phone || data.Phone || "",
             email: data.email || data.Email || "",
             logoUrl: (data.logoUrl || data.LogoUrl) ? `https://hotel-backend.runasp.net${data.logoUrl || data.LogoUrl}` : undefined,
+            logoBackgroundColor: data.logoBackgroundColor || data.LogoBackgroundColor || undefined,
             welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `https://hotel-backend.runasp.net${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
             aboutText: data.aboutText || data.AboutText || "",
             chefName: data.chefName || data.ChefName || "",
