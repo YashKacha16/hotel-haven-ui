@@ -1,3 +1,4 @@
+import { RoomImageSlider } from "@/components/RoomImageSlider";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -201,7 +202,7 @@ function Home() {
               <Reveal key={r.id} delay={i * 80}>
                 <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-shadow group py-0 pb-5 gap-0">
                   <div className="aspect-[4/5] overflow-hidden">
-                    <img src={r.images[0]} alt={r.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <RoomImageSlider images={r.images} alt={r.name} />
                   </div>
                   <div className="p-5">
                     <div className="text-xs tracking-widest uppercase text-gold">{r.tag}</div>
