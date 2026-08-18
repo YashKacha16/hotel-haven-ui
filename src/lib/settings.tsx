@@ -79,17 +79,17 @@ export function BrandProvider({ children }: { children: ReactNode }) {
 
     const realName = brand.name;
 
-    const updateTitle = () => {
-      if (/Maison Aur[eé]a/gi.test(document.title)) {
-        document.title = document.title.replace(/Maison Aur[eé]a/gi, realName);
+        const updateTitle = () => {
+      if (/Maison Aur[eAc]a/gi.test(document.title)) {
+        document.title = document.title.replace(/Maison Aur[eAc]a/gi, realName);
       } else if (/Maison/gi.test(document.title)) {
         document.title = document.title.replace(/Maison/gi, realName);
-      } else if (document.title.includes("Hotel —")) {
-        document.title = document.title.replace("Hotel —", `${realName} —`);
-      } else if (document.title.endsWith("— Hotel -)) {
-        document.title = document.title.replace("— Hotel -, `— ${realName}`);
+      } else if (document.title.includes("Hotel -")) {
+        document.title = document.title.replace("Hotel -", `${realName} -`);
+      } else if (document.title.endsWith("- Hotel")) {
+        document.title = document.title.replace("- Hotel", `- ${realName}`);
       } else if (!document.title.toLowerCase().includes(realName.toLowerCase())) {
-        document.title = `${realName} — Boutique Hotel & Restaurant`;
+        document.title = `${realName} - Boutique Hotel & Restaurant`;
       }
     };
 
