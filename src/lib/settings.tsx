@@ -9,6 +9,7 @@ export type BrandSettings = {
   logoUrl?: string;
   logoBackgroundColor?: string;
   welcomeImageUrl?: string;
+  heroImageUrl?: string;
   aboutText?: string;
   chefName?: string;
   chefDescription?: string;
@@ -53,6 +54,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             logoUrl: (data.logoUrl || data.LogoUrl) ? `https://hotel-backend.runasp.net${data.logoUrl || data.LogoUrl}` : undefined,
             logoBackgroundColor: data.logoBackgroundColor || data.LogoBackgroundColor || undefined,
             welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `https://hotel-backend.runasp.net${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
+            heroImageUrl: (data.heroImageUrl || data.HeroImageUrl) ? `https://hotel-backend.runasp.net${data.heroImageUrl || data.HeroImageUrl}` : undefined,
             aboutText: data.aboutText || data.AboutText || "",
             chefName: data.chefName || data.ChefName || "",
             chefDescription: data.chefDescription || data.ChefDescription || "",
