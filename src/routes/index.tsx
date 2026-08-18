@@ -231,11 +231,12 @@ function Home() {
                       <span><span className="font-serif text-xl">₹{r.price.toLocaleString()}</span><span className="text-xs text-muted-foreground"> /night</span></span>
                     </div>
                     
-                    <div className="mt-3 flex flex-wrap gap-2 text-muted-foreground">
-                      {(r.amenities || []).slice(0, 4).map((a) => {
-                        const I = getAmenityIcon(a);
-                        return <I key={a} className="h-4 w-4" title={a} />;
-                      })}
+                    <div className="mt-3 flex flex-wrap gap-1.5 text-xs text-muted-foreground">
+                      {(r.amenities || []).slice(0, 4).map((a) => (
+                        <span key={a} className="px-2 py-0.5 rounded bg-foreground/5 border border-foreground/10 text-[10px] tracking-wider uppercase font-medium">
+                          {a}
+                        </span>
+                      ))}
                     </div>
                     <Button onClick={() => requireAuth("Book this room", () => setBook(r))} className="w-full mt-4 bg-forest text-forest-foreground hover:bg-forest/90">Book</Button>
                   </div>

@@ -182,11 +182,12 @@ function RoomsPage() {
                     </span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground flex-1">{r.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2 text-muted-foreground">
-                    {(r.amenities || []).map((a: string) => {
-                      const I = getAmenityIcon(a);
-                      return <I key={a} className="h-4 w-4" title={a} />;
-                    })}
+                  <div className="mt-4 flex flex-wrap gap-1.5 text-xs text-muted-foreground">
+                    {(r.amenities || []).map((a: string) => (
+                      <span key={a} className="px-2 py-0.5 rounded bg-foreground/5 border border-foreground/10 text-[10px] tracking-wider uppercase font-medium">
+                        {a}
+                      </span>
+                    ))}
                   </div>
                   <div className="mt-5 flex gap-2">
                     <Button variant="outline" className="flex-1" onClick={() => setDetails(r)}>View Details</Button>
