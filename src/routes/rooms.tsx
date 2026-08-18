@@ -1,3 +1,4 @@
+import { useBrand } from "@/lib/settings";
 import { RoomImageSlider } from "@/components/RoomImageSlider";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
@@ -60,7 +61,7 @@ function mapBackendRoom(backendRoom: any) {
     size: size,
     beds: beds,
     images: images,
-    amenities: rawAmenities.length > 0 ? rawAmenities : ["WiFi", "AC", "Rain shower"],
+    amenities: rawAmenities,
     description: desc || `Experience premium comfort in our carefully designed ${categoryName}.`,
     number: num,
     floor: backendRoom.floor || backendRoom.Floor || "",
@@ -101,6 +102,7 @@ const getAmenityIcon = (name: string) => {
 };
 
 function RoomsPage() {
+  const BRAND = useBrand();
   const { requireAuth } = useAuth();
   const [category, setCategory] = useState("all");
   const [price, setPrice] = useState<[number, number]>([5000, 40000]);
@@ -116,7 +118,12 @@ function RoomsPage() {
       })
       .then((data) => {
         if (Array.isArray(data)) {
-          setLoadedRooms(data.map(mapBackendRoom));
+          setLoadedRooms(data.map(mapBackendRoom).map(r => ({
+            ...r,
+            amenities: (r.amenities || []).filter(a => 
+              BRAND.hotelAmenities?.map(x => x.toLowerCase()).includes(a.toLowerCase())
+            )
+          })));
         }
       })
       .catch(() => { });

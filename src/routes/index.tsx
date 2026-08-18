@@ -60,7 +60,7 @@ function mapBackendRoom(backendRoom: any) {
     size: size,
     beds: beds,
     images: images,
-    amenities: rawAmenities.length > 0 ? rawAmenities : ["WiFi", "AC", "Rain shower"],
+    amenities: rawAmenities,
     description: desc || `Experience premium comfort in our carefully designed ${categoryName}.`,
     number: num,
     floor: backendRoom.floor || backendRoom.Floor || "",
@@ -124,7 +124,12 @@ function Home() {
       })
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setLoadedRooms(data.map(mapBackendRoom));
+          setLoadedRooms(data.map(mapBackendRoom).map(r => ({
+            ...r,
+            amenities: (r.amenities || []).filter(a => 
+              BRAND.hotelAmenities?.map(x => x.toLowerCase()).includes(a.toLowerCase())
+            )
+          })));
         } else {
           setLoadedRooms(rooms);
         }
