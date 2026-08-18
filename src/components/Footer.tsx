@@ -10,9 +10,11 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             {BRAND.logoUrl ? (
-              <img src={BRAND.logoUrl} alt="Logo" className="h-9 w-9 object-contain rounded-full bg-gold p-1" />
+              <div className="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-md" style={{ backgroundColor: BRAND.logoBackgroundColor || '#070e17', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)' }}>
+              <img src={BRAND.logoUrl} alt="Logo" className="h-full w-full object-contain p-1" />
+            </div>
             ) : (
-              <span className="h-9 w-9 rounded-full bg-gold text-forest grid place-items-center font-serif text-xl">{BRAND.name[0]?.toUpperCase() || "A"}</span>
+              <span className="h-9 w-9 rounded-full text-forest grid place-items-center font-serif text-xl shadow-md" style={{ backgroundColor: BRAND.logoBackgroundColor || '#070e17' }}>{BRAND.name[0]?.toUpperCase() || "A"}</span>
             )}
             <span className="font-serif text-2xl">{BRAND.name}</span>
           </div>
