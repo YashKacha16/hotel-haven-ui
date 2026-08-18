@@ -14,6 +14,7 @@ export type BrandSettings = {
   chefDescription?: string;
   chefImageUrl?: string;
   hours: { day: string; time: string }[];
+  hotelAmenities?: string[];
 };
 
 const defaultBrand: BrandSettings = {
@@ -21,6 +22,7 @@ const defaultBrand: BrandSettings = {
   address: "",
   phone: "",
   email: "",
+  hotelAmenities: ["WiFi", "AC", "TV", "Balcony", "Minibar", "Bathtub"],
   hours: [
     { day: "Reception", time: "24 hours" },
     { day: "Restaurant — Breakfast", time: "7:00 – 11:00" },
@@ -55,6 +57,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             chefName: data.chefName || data.ChefName || "",
             chefDescription: data.chefDescription || data.ChefDescription || "",
             chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `https://hotel-backend.runasp.net${data.chefImageUrl || data.ChefImageUrl}` : undefined,
+            hotelAmenities: data.hotelAmenities || data.HotelAmenities || defaultBrand.hotelAmenities,
             hours: defaultBrand.hours,
           });
         }

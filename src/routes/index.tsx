@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Star, ArrowRight, Wifi, Waves, Flower2, Car, UtensilsCrossed, Dumbbell, BellRing, Plane, ShieldCheck, BadgeCheck, Clock } from "lucide-react";
+import { Star, ArrowRight, Wifi, Waves, Flower2, Car, UtensilsCrossed, Dumbbell, BellRing, Plane, ShieldCheck, BadgeCheck, Clock, Wind, Tv, Compass, GlassWater, Bath, Sparkles } from "lucide-react";
 import { IMG, rooms, reviews, menu, amenities, gallery } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { useBrand } from "@/lib/settings";
