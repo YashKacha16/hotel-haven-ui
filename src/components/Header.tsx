@@ -38,9 +38,11 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 shrink-0">
           {BRAND.logoUrl ? (
-            <img src={BRAND.logoUrl} alt="Logo" className="h-9 w-9 object-contain rounded-full bg-forest p-1" />
+            <div className="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-md" style={{ backgroundColor: BRAND.logoBackgroundColor || '#070e17', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)' }}>
+              <img src={BRAND.logoUrl} alt="Logo" className="h-full w-full object-contain p-1" />
+            </div>
           ) : (
-            <span className="h-9 w-9 rounded-full bg-forest text-gold grid place-items-center font-serif text-xl">{BRAND.name[0]?.toUpperCase() || "A"}</span>
+            <span className="h-9 w-9 rounded-full text-gold grid place-items-center font-serif text-xl shadow-md" style={{ backgroundColor: BRAND.logoBackgroundColor || '#070e17' }}>{BRAND.name[0]?.toUpperCase() || "A"}</span>
           )}
           <span className="font-serif text-xl sm:text-2xl leading-none">{BRAND.name}</span>
         </Link>
