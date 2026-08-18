@@ -79,6 +79,25 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+
+const getAmenityIcon = (name: string) => {
+  const lower = name.toLowerCase();
+  if (lower.includes("wifi") || lower.includes("internet")) return Wifi;
+  if (lower.includes("pool") || lower.includes("wave") || lower.includes("swim")) return Waves;
+  if (lower.includes("spa") || lower.includes("wellness")) return Flower2;
+  if (lower.includes("park") || lower.includes("car")) return Car;
+  if (lower.includes("dine") || lower.includes("dining") || lower.includes("food") || lower.includes("restaurant")) return UtensilsCrossed;
+  if (lower.includes("gym") || lower.includes("fit") || lower.includes("workout")) return Dumbbell;
+  if (lower.includes("service") || lower.includes("bell")) return BellRing;
+  if (lower.includes("pick") || lower.includes("plane") || lower.includes("transfer") || lower.includes("airport")) return Plane;
+  if (lower.includes("tv")) return Tv;
+  if (lower.includes("ac") || lower.includes("air")) return Wind;
+  if (lower.includes("balcony") || lower.includes("view")) return Compass;
+  if (lower.includes("bar") || lower.includes("drink")) return GlassWater;
+  if (lower.includes("bath") || lower.includes("tub")) return Bath;
+  return Sparkles;
+};
+
 function Home() {
   const { requireAuth } = useAuth();
   const BRAND = useBrand();

@@ -23,11 +23,11 @@ const defaultBrand: BrandSettings = {
   phone: "",
   email: "",
   hotelAmenities: ["WiFi", "AC", "TV", "Balcony", "Minibar", "Bathtub"],
-  hours: [
+    hours: [
     { day: "Reception", time: "24 hours" },
-    { day: "Restaurant — Breakfast", time: "7:00 – 11:00" },
-    { day: "Restaurant — Lunch", time: "12:30 – 15:30" },
-    { day: "Restaurant — Dinner", time: "19:00 – 23:00" },
+    { day: "Restaurant - Breakfast", time: "7:00 - 11:00" },
+    { day: "Restaurant - Lunch", time: "12:30 - 15:30" },
+    { day: "Restaurant - Dinner", time: "19:00 - 23:00" },
   ],
 };
 
@@ -58,7 +58,16 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             chefDescription: data.chefDescription || data.ChefDescription || "",
             chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `https://hotel-backend.runasp.net${data.chefImageUrl || data.ChefImageUrl}` : undefined,
             hotelAmenities: data.hotelAmenities || data.HotelAmenities || defaultBrand.hotelAmenities,
-            hours: defaultBrand.hours,
+            hours: (() => {
+              const rawHours = data.hotelHours || data.HotelHours;
+              if (rawHours && rawHours.length > 0) {
+                return rawHours.map(hStr => {
+                  const parts = hStr.split('|');
+                  return { day: parts[0] || "", time: parts[1] || "" };
+                });
+              }
+              return defaultBrand.hours;
+            })(),
           });
         }
       })
@@ -77,8 +86,8 @@ export function BrandProvider({ children }: { children: ReactNode }) {
         document.title = document.title.replace(/Maison/gi, realName);
       } else if (document.title.includes("Hotel —")) {
         document.title = document.title.replace("Hotel —", `${realName} —`);
-      } else if (document.title.endsWith("— Hotel")) {
-        document.title = document.title.replace("— Hotel", `— ${realName}`);
+      } else if (document.title.endsWith("— Hotel -)) {
+        document.title = document.title.replace("— Hotel -, `— ${realName}`);
       } else if (!document.title.toLowerCase().includes(realName.toLowerCase())) {
         document.title = `${realName} — Boutique Hotel & Restaurant`;
       }
