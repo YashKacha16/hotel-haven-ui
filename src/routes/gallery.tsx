@@ -61,7 +61,7 @@ function Gallery() {
                   <div className="aspect-[4/3] overflow-hidden relative bg-muted">
                     {item.imageUrl ? (
                       <img
-                        src={`https://hotel-backend.runasp.net/attachments/gallery/${item.imageUrl}`}
+                        src={`https://hotel-backend.runasp.net${item.imageUrl.includes('/attachments') ? item.imageUrl : `/attachments/gallery/${item.imageUrl}`}`}
                         alt={item.description || "Gallery"}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
