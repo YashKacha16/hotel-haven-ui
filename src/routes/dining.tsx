@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/lib/reveal";
 import { PageShell, PageHero } from "@/components/PageShell";
 import { UtensilsCrossed } from "lucide-react";
+import { useBrand } from "@/lib/settings";
 
 export const Route = createFileRoute("/dining")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/dining")({
 });
 
 function DiningPage() {
+  const BRAND = useBrand();
   const [loadedMenu, setLoadedMenu] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function DiningPage() {
 
   return (
     <PageShell>
-      <PageHero eyebrow="Dining" title="coastal menu" subtitle="Line-caught seafood, heritage grain and the vegetables our neighbours grow." image="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" />
+      <PageHero eyebrow="Dining" title="coastal menu" subtitle="Line-caught seafood, heritage grain and the vegetables our neighbours grow." image={BRAND.diningHeroImageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80"} />
 
       {/* MENU */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-20">

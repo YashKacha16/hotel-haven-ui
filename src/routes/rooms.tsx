@@ -120,7 +120,7 @@ function RoomsPage() {
         if (Array.isArray(data)) {
           setLoadedRooms(data.map(mapBackendRoom).map(r => ({
             ...r,
-            amenities: (r.amenities || []).filter(a => 
+            amenities: (r.amenities || []).filter((a: string) => 
               BRAND.hotelAmenities?.map(x => x.toLowerCase()).includes(a.toLowerCase())
             )
           })));
@@ -140,7 +140,7 @@ function RoomsPage() {
 
   return (
     <PageShell>
-      <PageHero eyebrow="Rooms & Suites" title="Eighteen rooms. One quiet philosophy." image="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1920&q=80" />
+      <PageHero eyebrow="Rooms & Suites" title="Eighteen rooms. One quiet philosophy." image={BRAND.roomsHeroImageUrl || "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1920&q=80"} />
 
       {/* Filter bar */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 -mt-12 relative z-20">

@@ -61,7 +61,7 @@ function About() {
       <PageHero
         eyebrow="Our story"
         title={BRAND.name ? `About ${BRAND.name}` : "About Us"}
-        image="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1920&q=80"
+        image={BRAND.aboutHeroImageUrl || "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1920&q=80"}
       />
 
       {paragraphs.length > 0 ? (

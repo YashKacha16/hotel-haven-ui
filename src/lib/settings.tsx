@@ -10,6 +10,11 @@ export type BrandSettings = {
   logoBackgroundColor?: string;
   welcomeImageUrl?: string;
   heroImageUrl?: string;
+  roomsHeroImageUrl?: string;
+  diningHeroImageUrl?: string;
+  aboutHeroImageUrl?: string;
+  contactHeroImageUrl?: string;
+  galleryHeroImageUrl?: string;
   aboutText?: string;
   chefName?: string;
   chefDescription?: string;
@@ -38,6 +43,13 @@ export function BrandProvider({ children }: { children: ReactNode }) {
   const [brand, setBrand] = useState<BrandSettings>(defaultBrand);
 
   useEffect(() => {
+    const resolveUrl = (path?: string) => {
+      if (!path) return undefined;
+      if (path.startsWith("http")) return path;
+      const cleanPath = path.startsWith("/") ? path : `/${path}`;
+      return `https://hotel-backend.runasp.net${cleanPath}`;
+    };
+
     fetch("https://hotel-backend.runasp.net/api/Settings/general")
       .then((res) => {
         if (!res.ok) throw new Error();
@@ -51,19 +63,24 @@ export function BrandProvider({ children }: { children: ReactNode }) {
             address: data.address || data.Address || "",
             phone: data.phone || data.Phone || "",
             email: data.email || data.Email || "",
-            logoUrl: (data.logoUrl || data.LogoUrl) ? `https://hotel-backend.runasp.net${data.logoUrl || data.LogoUrl}` : undefined,
+            logoUrl: resolveUrl(data.logoUrl || data.LogoUrl),
             logoBackgroundColor: data.logoBackgroundColor || data.LogoBackgroundColor || undefined,
-            welcomeImageUrl: (data.welcomeImageUrl || data.WelcomeImageUrl) ? `https://hotel-backend.runasp.net${data.welcomeImageUrl || data.WelcomeImageUrl}` : undefined,
-            heroImageUrl: (data.heroImageUrl || data.HeroImageUrl) ? `https://hotel-backend.runasp.net${data.heroImageUrl || data.HeroImageUrl}` : undefined,
+            welcomeImageUrl: resolveUrl(data.welcomeImageUrl || data.WelcomeImageUrl),
+            heroImageUrl: resolveUrl(data.heroImageUrl || data.HeroImageUrl),
+            roomsHeroImageUrl: resolveUrl(data.roomsHeroImageUrl || data.RoomsHeroImageUrl),
+            diningHeroImageUrl: resolveUrl(data.diningHeroImageUrl || data.DiningHeroImageUrl),
+            aboutHeroImageUrl: resolveUrl(data.aboutHeroImageUrl || data.AboutHeroImageUrl),
+            contactHeroImageUrl: resolveUrl(data.contactHeroImageUrl || data.ContactHeroImageUrl),
+            galleryHeroImageUrl: resolveUrl(data.galleryHeroImageUrl || data.GalleryHeroImageUrl),
             aboutText: data.aboutText || data.AboutText || "",
             chefName: data.chefName || data.ChefName || "",
             chefDescription: data.chefDescription || data.ChefDescription || "",
-            chefImageUrl: (data.chefImageUrl || data.ChefImageUrl) ? `https://hotel-backend.runasp.net${data.chefImageUrl || data.ChefImageUrl}` : undefined,
+            chefImageUrl: resolveUrl(data.chefImageUrl || data.ChefImageUrl),
             hotelAmenities: data.hotelAmenities || data.HotelAmenities || defaultBrand.hotelAmenities,
             hours: (() => {
               const rawHours = data.hotelHours || data.HotelHours;
               if (rawHours && rawHours.length > 0) {
-                return rawHours.map(hStr => {
+                return rawHours.map((hStr: string) => {
                   const parts = hStr.split('|');
                   return { day: parts[0] || "", time: parts[1] || "" };
                 });

@@ -100,7 +100,7 @@ function Contact() {
         eyebrow="Feedback & Contact"
         title="Share your experience"
         subtitle="We value your feedback and answer every note personally."
-        image="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1920&q=80"
+        image={brand.contactHeroImageUrl || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80"}
       />
 
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16 grid md:grid-cols-2 gap-8">
