@@ -33,8 +33,12 @@ function GalleryPage() {
   const getPhotoUrl = (url?: string) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    const cleanUrl = url.startsWith("/") ? url : `/${url}`;
-    return `https://hotel-backend.runasp.net${cleanUrl}`;
+    if (url.includes("/attachments")) {
+      const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+      return `https://hotel-backend.runasp.net${cleanUrl}`;
+    }
+    const cleanName = url.startsWith("/") ? url.slice(1) : url;
+    return `https://hotel-backend.runasp.net/attachments/gallery/${cleanName}`;
   };
 
   useEffect(() => {
