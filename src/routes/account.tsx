@@ -249,7 +249,7 @@ function Account() {
                 </div>
               )}
               <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Payment method</span><span className="uppercase">{selectedBooking.paymentMethod}</span></div>
-              <div className="flex justify-between pb-2"><span className="text-muted-foreground">Guest details</span><span>{selectedBooking.guestName} ({selectedBooking.phone})</span></div>
+              <div className="flex justify-between pb-2"><span className="text-muted-foreground">Guest details</span><span>{user?.name} ({user?.phone})</span></div>
             </div>
           )}
           <div className="flex justify-end pt-2">
