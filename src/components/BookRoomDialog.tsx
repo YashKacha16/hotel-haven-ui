@@ -43,7 +43,7 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
         fetch("https://hotel-backend.runasp.net/api/Rooms")
           .then((res) => res.json())
           .then((roomsList) => {
-            const matched = roomsList.find((r: any) => r.category?.name?.toLowerCase() === room.category.toLowerCase());
+            const matched = roomsList.find((r: any) => String(r.id || r.Id) === room.id);
             if (matched) {
               if (matched.capacity) setMaxCapacity(matched.capacity);
               setMatchedRoomId(matched.id);
