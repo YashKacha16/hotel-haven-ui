@@ -98,6 +98,13 @@ function Account() {
 
   useEffect(() => {
     fetchUserData();
+    if (user) {
+      setState(s => ({
+        name: user.name ?? s.name,
+        email: user.email ?? s.email,
+        phone: user.phone ?? s.phone
+      }));
+    }
   }, [user]);
 
   const cancelBooking = async (dbId: number) => {
