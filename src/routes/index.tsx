@@ -126,7 +126,7 @@ function Home() {
         if (Array.isArray(data) && data.length > 0) {
           setLoadedRooms(data.map(mapBackendRoom).map(r => ({
             ...r,
-            amenities: (r.amenities || []).filter(a => 
+            amenities: (r.amenities || []).filter((a: string) => 
               BRAND.hotelAmenities?.map(x => x.toLowerCase()).includes(a.toLowerCase())
             )
           })));
