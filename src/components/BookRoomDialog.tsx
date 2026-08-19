@@ -116,8 +116,28 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
         {step === 1 && (
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-3">
-              <Field label="Check-in"><Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
-              <Field label="Check-out"><Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
+              <Field label="Check-in">
+                <Input 
+                  type="date" 
+                  min={new Date().toISOString().split('T')[0]}
+                  value={checkIn} 
+                  onChange={(e) => {
+                    const newCheckIn = e.target.value;
+                    setCheckIn(newCheckIn);
+                    if (checkOut && newCheckIn >= checkOut) {
+                      setCheckOut("");
+                    }
+                  }} 
+                />
+              </Field>
+              <Field label="Check-out">
+                <Input 
+                  type="date" 
+                  min={checkIn ? new Date(new Date(checkIn).getTime() + 86400000).toISOString().split('T')[0] : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]}
+                  value={checkOut} 
+                  onChange={(e) => setCheckOut(e.target.value)} 
+                />
+              </Field>
               <Field label="Guests">
                 <Input type="number" min={1} max={maxCapacity + extraBeds} value={guests} onChange={(e) => setGuests(+e.target.value)} />
                 <span className="text-[10px] text-muted-foreground mt-1 block">Capacity: {maxCapacity} guests (max {maxCapacity + 2} with extra beds)</span>
@@ -143,8 +163,16 @@ export function BookRoomDialog({ room, open, onOpenChange }: Props) {
                 toast.error(`The selected room with ${extraBeds} extra bed(s) can accommodate at most ${maxAllowed} guests.`);
                 return;
               }
+              if (new Date(checkIn) < new Date(new Date().toISOString().split('T')[0])) {
+                toast.error("Check-in date cannot be in the past.");
+                return;
+              }
+              if (new Date(checkIn) >= new Date(checkOut)) {
+                toast.error("Check-out date must be after check-in date.");
+                return;
+              }
               setStep(2);
-            }} disableNext={!checkIn || !checkOut || hasConflict} />
+            }} disableNext={!checkIn || !checkOut || hasConflict || new Date(checkIn) >= new Date(checkOut)} />
           </div>
         )}
         {step === 2 && (
